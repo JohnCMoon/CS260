@@ -1,0 +1,165 @@
+
+Current inventory:
+	(no items)
+
+Adding helmet with a weight of 5.
+You picked up a helmet.
+
+Current inventory:
+	[1] helmet
+Total items: 1
+Total weight: 5
+
+Adding bracelet of power with a weight of 1.
+You picked up a bracelet of power.
+Adding red potion with a weight of 2.
+You picked up a red potion.
+
+Current inventory:
+	[1] bracelet of power
+	[1] helmet
+	[1] red potion
+Total items: 3
+Total weight: 8
+
+Adding bracelet of power with a weight of 1.
+You picked up a bracelet of power.
+Adding red potion with a weight of 2.
+You picked up a red potion.
+
+Current inventory:
+	[2] bracelet of power
+	[1] helmet
+	[2] red potion
+Total items: 5
+Total weight: 11
+
+Adding bag of gold coins with a weight of 50.
+You picked up a bag of gold coins.
+Adding bag of gold coins with a weight of 50.
+You're not strong enough to pick up the bag of gold coins with everything else you're carrying.
+Removing short sword.
+You don't have a short sword in your inventory.
+Removing helmet.
+You dropped a helmet.
+Removing bracelet of power.
+You dropped a bracelet of power.
+
+Current inventory:
+	[1] bag of gold coins
+	[1] bracelet of power
+	[2] red potion
+Total items: 4
+Total weight: 55
+
+Adding yellow potion with a weight of 0.5.
+You picked up a yellow potion.
+Adding trident with a weight of 1.
+You picked up a trident.
+Adding helmet with a weight of 1.
+You picked up a helmet.
+Adding amulet with a weight of 1.
+You picked up a amulet.
+
+Current inventory:
+	[1] amulet
+	[1] helmet
+	[1] trident
+	[1] yellow potion
+Total items: 4
+Total weight: 3.5
+
+Adding aardvark skin with a weight of 5.
+You picked up a aardvark skin.
+Adding newt's eye with a weight of 0.1.
+You picked up a newt's eye.
+Adding zebra feather with a weight of 0.1.
+You picked up a zebra feather.
+
+Current inventory:
+	[1] aardvark skin
+	[1] amulet
+	[1] helmet
+	[1] newt's eye
+	[1] trident
+	[1] yellow potion
+	[1] zebra feather
+Total items: 7
+Total weight: 8.7
+
+Removing aardvark skin.
+You dropped a aardvark skin.
+Removing newt's eye.
+You dropped a newt's eye.
+Removing zebra feather.
+You dropped a zebra feather.
+
+Current inventory:
+	[1] amulet
+	[1] helmet
+	[1] trident
+	[1] yellow potion
+Total items: 4
+Total weight: 3.5
+
+Adding helmet with a weight of 1.
+You picked up a helmet.
+Adding Helmet with a weight of 1.
+You picked up a Helmet.
+Adding HELMET with a weight of 1.
+You picked up a HELMET.
+
+Current inventory:
+	[1] amulet
+	[4] helmet
+	[1] trident
+	[1] yellow potion
+Total items: 7
+Total weight: 6.5
+
+Removing HELMET.
+You dropped a HELMET.
+
+Current inventory:
+	[1] amulet
+	[3] helmet
+	[1] trident
+	[1] yellow potion
+Total items: 6
+Total weight: 5.5
+
+Adding bag of gold coins with a weight of 50.
+You picked up a bag of gold coins.
+Adding feather with a weight of 0.1.
+You're not strong enough to pick up the feather with everything else you're carrying.
+
+Current inventory:
+	[1] bag of gold coins
+Total items: 1
+Total weight: 50
+
+Removing bag of gold coins.
+You dropped a bag of gold coins.
+
+Current inventory:
+	(no items)
+
+Adding this is such a long item and nothing should have a name thing long but we have no guarantee that some crazy person wouldn't make such an item and then we need to make sure our program doesn't break.  Hint: don't use char[] to store data.  Only use char*. with a weight of 1.
+You picked up a this is such a long item and nothing should have a name thing long but we have no guarantee that some crazy person wouldn't make such an item and then we need to make sure our program doesn't break.  Hint: don't use char[] to store data.  Only use char*..
+
+Current inventory:
+	[1] this is such a long item and nothing should have a name thing long but we have no guarantee that some crazy person wouldn't make such an item and then we need to make sure our program doesn't break.  Hint: don't use char[] to store data.  Only use char*.
+Total items: 1
+Total weight: 1
+
+Adding helmet with a weight of 1.
+You picked up a helmet.
+Adding helmet with a weight of 10.
+ERROR: tried to add a duplicate item with wrong weight!
+
+Current inventory:
+	[1] helmet
+	[1] this is such a long item and nothing should have a name thing long but we have no guarantee that some crazy person wouldn't make such an item and then we need to make sure our program doesn't break.  Hint: don't use char[] to store data.  Only use char*.
+Total items: 2
+Total weight: 2
+

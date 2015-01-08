@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+<h1>CS260 Lab: Inventory</h1>
+
+<h2>Instructions</h2>
+
+<p>
+  Being an incurable computer geek, you have toyed around with the
+  idea of creating your own RPG or adventure game.  Of course there
+  are so many aspects of an adventure game it is nearly impossible to
+  consider them all at once so you have decided to start small.  Very
+  small.  You are going to write just the "inventory" part of the
+  game. 
+</p>
+
+<p>
+  Every player in the game has an inventory of the items he/she has.
+  Items such as swords, helmets, potions, gold, and so on.  Each
+  player can have more than one of any item but they also have a limit
+  on the total weight they can carry.  Players can see the list of all
+  of the items in their inventory.  They can add and remove items from
+  the list as well.
+</p>
+
+<p>
+  Items are identified by their name and the names are case
+  insensitive. For example, "helmet", "Helmet", and "HELMET" should
+  all be considered the same sort of thing (that is, count 3 of them,
+  not 3 different things).
+</p>
+
+<p>
+  If the program tries to insert a duplicate item (by checking the
+  name) but the new item's weight is different than the weight of the
+  existing item you should print an error message (see the sample
+  output to see what the message should say) and the item should NOT
+  be inserted into the list.
+</p>
+
+<p>
+  You have decided to implement the inventory as a linked list of
+  items.  The inventory list will support the ability to add an item,
+  remove an item, get the total count of items, the total weight, and
+  display the list.
+</p>
+
+<h2>Implementation Requirements</h2>
+
+<p>
+  Your implementation should have a class called "inventory" that
+  manages the entire inventory of your player. You will also need a
+  class called "item" that contains the information about each item.
+</p>
+
+<h3>The "item" class</h3>
+
+<p>
+  The "item" class is intended to hold the details about a particular
+  item.  Each item has a name (e.g. "red potion") and a weight
+  (e.g. 2.0).  The weight should be a double.  The "item" class should
+  have a constructor that takes in a char* name and a double weight.
+  You are free to add any other methods that you need.
+</p>
+
+<h3>The "inventory" class</h3>
+
+<p>
+  The "inventory" class is intended to hold all of the items in a
+  linked list. The "inventory" class should also maintain a "max
+  weight" data member that specifies the maximum weight that this
+  particular inventory can hold.  One of the "inventory" constructors
+  should set the default value for the weight to be 100.  There should
+  be another constructor that allows for the weight to be passed in.
+</p>
+
+<p>
+  The "inventory" class should contain a method called "AddItem".
+  This method will take in a new "item" object and add it to the
+  inventory.  Items need to be saved in the linked list in
+  alphabetical order.  Also, duplicate items should not be added as
+  new nodes but instead, the program should maintain an "item count"
+  for each item.  When a duplicate item is added to the inventory then
+  the item count for that item should be incremented.
+</p>
+
+<p>
+  The "inventory" class should contain a method called "RemoveItem".
+  This method takes a char* parameter, finds the node in the linked
+  list with that name, and removes that item.  Since there could be
+  duplicate items in the inventory, the remove method needs to be able
+  to just decrement the item count (see above) instead of remove the
+  node from the linked list.
+</p>
+
+<p>
+  The "inventory" class needs to have GetCount() and GetWeight()
+  methods that return the current item count and total weight.  You
+  are free to calculate this information on an "as needed" basis or
+  keep a class member variable that holds the information.
+</p>
+
+<p>
+  Finally, the "inventory" class needs to have a PrintInventory()
+  method that displays the inventory. Be sure to examine the sample
+  output (below) to see the exact format of the inventory output.
+</p>
+
+<p>
+  You may find it helpful to create a node structure that encapsulates
+  the "item", the item count, and the next pointer.  It's not a
+  functional requirement but I think you will find this makes it
+  easier to write the program.
+</p>
+
+<h3>Other requirements</h3>
+
+<p>
+  This assignment includes a main.cpp file.  You must use this exact
+  main.cpp file without any modifications for your program.  In order
+  for this to work correctly you will need to make sure to use correct
+  file names "inventory.h" and "item.h".  You will also need to make
+  sure to name your classes and methods as described above.
+</p>
+
+<p>
+  When you run your program using this main function your program
+  should generate the output shown in the expected.txt file (included
+  with the assignment).  You need to match the text exactly including
+  spaces and newlines.
+</p>
+
+<h2>Hints</h2>
+
+<p>
+  On assignments like this many students encounter the same sort of
+  problems.  Here are some hints on how to avoid the common pitfalls.
+</p>
+
+<p><b>Don't use char[] as the "name" for your item</b> You will find
+  lots of examples online, and even in some of the book code and
+  examples in this course, that use char[somesize] to hold a string.
+  This ok for small examples and in isolated code where you KNOW the
+  size of the string data that will be in the char[].  This doesn't
+  work for the field in a class.  You don't know beforehand how long
+  the strings are going to be.  You need to use dynamically allocated
+  char* data.
+</p>
+
+<p><b>Don't use break statements</b>  At least 99% of the time break
+  statements are not needed in loops.  There is almost always a better
+  way to structure the code so that a break statement is not needed.
+  You will find that with better code structure your program is easier
+  to write, debug, and maintain.
+</p>
+
+<p><b>Only one return statement per method</b> It is almost a
+  guarantee that I will deduct points from your assignment if you have
+  more than one return statement in a single method.  The rationale
+  here is similar to the arguement I make for not using break
+  statements.  
+</p>
+
+<p><b>Case-insensitive string comparison is tricky</b> The
+  case-insensitive comparison of the names for items is a tricky part
+  of this assignment.  Make sure you give yourself enough time to work
+  through it.
+</p>
+
+<h2>To Submit This Assignment</h2>
+
+<p>
+  First, "clean" your project by doing the following: 
+</p>
+
+<ul>
+  <li>
+    execute <strong>Clean Solution</strong> in
+    the <strong>Build</strong> menu
+  </li>
+  <li>
+    close Visual Studio, and then delete the <strong>.ncb</strong>
+    file from your solution's root folder
+  </li>
+</ul>
+
+<p>
+
+  After cleaning your project, compress it
+  into <strong>lab1.zip</strong>. Make sure you have your Zip
+  application set to <em>preserve the folder structure</em> of your
+  project, and make sure that your .zip file <em>will extract into a
+  single folder</em>, the way that the .zip files from this course do.
+
+  <br/>
+
+  Doing these things will ensure that your .zip file is as small as
+  possible, which will make both your upload and my download quicker.
+
+  <br/>
+
+  Submit the .zip file containing your cleaned project to Desire2Learn.
+</p>
+
+</body></html>
