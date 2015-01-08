@@ -43,7 +43,9 @@ private:
 
 inventory::inventory()
 {
-    MaxWeight = 100;
+    MaxWeight =     100;
+    ItemCount =     0;
+    CurrentWeight = 0;
 }
 
 /* Able to pass max weight through this constructor */
@@ -51,14 +53,20 @@ inventory::inventory(int UserMaxWeight)
 {
     if (UserMaxWeight > 0 && UserMaxWeight < INT_MAX)
         MaxWeight = UserMaxWeight;
+    ItemCount =     0;
+    CurrentWeight = 0;
 }
 
 void inventory::PrintInventory()
 {
+    if (ItemCount == 0)
+        return;
+
     node *current;
     current = new node;
     current = head;
-    /* Something in this loop is crashing the program... */
+    cout << current->data.name << endl;
+    
     while (current->link != NULL) {
         cout << "Item: " << current->data.name << endl;
         cout << "Weight: " << current->data.weight << endl << endl;
@@ -70,6 +78,13 @@ void inventory::PrintInventory()
 
 void inventory::AddItem(item NewItem)
 {
+    node *current;
+    current = new node;
+    current = head;
+    char *LowerNewItem = ToLower(NewItem);
+    if (strcmp(LowerNewItem, current->data.name) <= 0)
+       /* Here inserting aplhabetically gets tricky.... */ 
+    ItemCount++;    
     return;
 }
 
@@ -81,6 +96,7 @@ void inventory::RemoveItem(char *name)
         if (head->data.qty > 1) {
             head->data.qty--;
         } else {
+            ItemCount--;
             delete &(head->data);
         }
     }
@@ -101,6 +117,7 @@ void inventory::RemoveItem(char *name)
             if (current->data.qty > 1) {
                 current->data.qty--;
             } else {
+                ItemCount--;
                 last->link = current->link;
                 delete current;
             }
@@ -114,6 +131,7 @@ void inventory::RemoveItem(char *name)
         if (current->data.qty > 1) {
             current->data.qty--;
         } else {
+            ItemCount--;
             last->link = NULL;
             delete current;
         }
