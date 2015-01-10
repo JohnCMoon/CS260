@@ -18,10 +18,13 @@ char *ToLower(char *string);
 
 struct node {
     item data;
-    node *link;
+    node *next;
+    node *prev;
+    int qty;
     node()
     {
-        link = NULL;   
+        next = NULL;
+        prev = NULL;   
     }
 };
 
@@ -59,38 +62,114 @@ inventory::inventory(int UserMaxWeight)
 
 void inventory::PrintInventory()
 {
+    cout << "Current inventory:" << endl;
+
     if (ItemCount == 0)
         return;
 
-    node *current;
-    current = new node;
-    current = head;
-    cout << current->data.name << endl;
-    
-    while (current->link != NULL) {
-        cout << "Item: " << current->data.name << endl;
-        cout << "Weight: " << current->data.weight << endl << endl;
-        current = current->link;
+    node *traverse;
+    traverse = new node;
+    traverse = head;
+ 
+    while (traverse->link != NULL) {
+        cout << "\t[" << traverse.qty << "] " 
+        cout << traverse->data.name << endl;
+        traverse = traverse->next;
     }
-    cout << "Item: " << current->data.name << endl;
-    cout << "Weight: " << current->data.weight << endl << endl;
+    cout << "\t[" << traverse.qty << "] " 
+    cout << traverse->data.name << endl;
+
+    cout << "Total items: " << GetCount() << endl;
+    cout << "Total weight: " << GetWeight() << endl << endl;
 }
 
 void inventory::AddItem(item NewItem)
 {
-    node *current;
-    current = new node;
-    current = head;
-    char *LowerNewItem = ToLower(NewItem);
-    if (strcmp(LowerNewItem, current->data.name) <= 0)
-       /* Here inserting aplhabetically gets tricky.... */ 
-    ItemCount++;    
-    return;
+    if (NewItem.weight > MaxWeight - CurrentWeight) {
+        cout << "error: item is too heavy.";
+        return;
+    }
+
+    if (ItemCount == 0) {
+        head->data      = NewItem;
+        head.qty        = 1;
+        ItemCount++; 
+        CurrentWeight = head->data.weight;
+    } else { 
+
+        /* Check for matching node first */  
+        char *LowerNewName = ToLower(NewItem.name);
+        node *traverse;
+        traverse = new node;
+        traverse = head;
+        while (traverse->next != NULL) {
+            if (strcmp(LowerNewName, traverse->data.name) == 0) {
+                traverse.qty++;
+                ItemCount++;
+                CurrentWeight = traverse->data.weight;
+                return;
+            } else {
+                traverse->next->prev = traverse;
+                traverse = traverse->next;
+            }
+        }
+        /* One more check for the last entry */
+        if (strcmp(LowerNewName, traverse->data.name) == 0) {
+                traverse.qty++;
+                ItemCount++;
+                CurrentWeight = traverse->data.weight;
+                return;
+        }
+
+        traverse = head; // Reset
+
+        /* No existing item with that name, so time for a new node */
+        node *NewNode;
+        NewNode = new node;
+        NewNode->data = NewItem;
+        NewNode.qty = 1;
+
+        /* Now to insert it alphabetically */
+        while (traverse->next != NULL) {
+            if (strcmp(NewNode->data.name, traverse->data.name) < 0) {
+                if (traverse->prev == NULL) { // It's head
+                    head->prev = NewNode;
+                    NewNode->next = head;
+                    head = NewNode;
+                    ItemCount++;  
+                    CurrentWeight = traverse->data.weight;
+                }
+                traverse->prev->next = NewNode;
+                traverse->prev = NewNode;
+                NewNode->next = traverse;
+                ItemCount++;
+                CurrentWeight = traverse->data.weight;
+            } else {
+                traverse->next->prev = traverse;
+                traverse = traverse->next;
+            }
+        }
+        if (strcmp(NewNode->data.name, traverse->data.name) < 0) {
+            traverse->prev->next = NewNode;
+            traverse->prev = NewNode;
+            NewNode->next = traverse;
+            ItemCount++;
+            CurrentWeight = traverse->data.weight;
+        } else {
+            traverse->next = NewNode;
+            NewNode->prev = traverse;
+            NewNode->next = NULL;
+            ItemCount++;
+            CurrentWeight = traverse->data.weight;
+        }
+        delete traverse;       
 }
 
 void inventory::RemoveItem(char *name)
 {
+    cout << "Removing item " << name << endl;
     char *LowerName = ToLower(name);
+    cout << "Lowercase item " << LowerName << endl; 
     /* Checks head for the matching name */
     if (strcmp(head->data.name, LowerName) == 0) {
         if (head->data.qty > 1) {
@@ -106,40 +185,40 @@ void inventory::RemoveItem(char *name)
         return;
     
     /* Okay, now we can process all of the rest. */
-    node *current;
+    node *traverse;
     node *last;
-    current = new node;
+    traverse = new node;
     last    = new node;
-    current = head->link;
+    traverse = head->link;
     last    = head;
-    while (current->link != NULL) {
-        if (strcmp(current->data.name, LowerName) == 0) {
-            if (current->data.qty > 1) {
-                current->data.qty--;
+    while (traverse->link != NULL) {
+        if (strcmp(traverse->data.name, LowerName) == 0) {
+            if (traverse->data.qty > 1) {
+                traverse->data.qty--;
             } else {
                 ItemCount--;
-                last->link = current->link;
-                delete current;
+                last->link = traverse->link;
+                delete traverse;
             }
-            last    = current;
-            current = current->link;
+            last    = traverse;
+            traverse = traverse->link;
         }
     }
     
     /* Now for the last one */
-    if (strcmp(current->data.name, LowerName) ==0) {
-        if (current->data.qty > 1) {
-            current->data.qty--;
+    if (strcmp(traverse->data.name, LowerName) ==0) {
+        if (traverse->data.qty > 1) {
+            traverse->data.qty--;
         } else {
             ItemCount--;
             last->link = NULL;
-            delete current;
+            delete traverse;
         }
     }
     delete LowerName;
 }
 
-/* Outputs current number of items in the inventory */
+/* Outputs traverse number of items in the inventory */
 int inventory::GetCount()
 {
     return ItemCount;
@@ -154,7 +233,6 @@ int inventory::GetWeight()
 /* Converts string to all lowercase characters */
 char *ToLower(char *string)
 {
-    cout << "Made it to the ToLower function!" << endl;
     int length = strlen(string);
     char *LowerString;
     LowerString = new char[length];
