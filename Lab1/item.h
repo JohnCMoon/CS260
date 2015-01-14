@@ -13,20 +13,21 @@
 class item {
 public:
     item(char *name, double weight);
-    item();
     char *name;
     double weight;
-    int qty;
+    item();
 };
 
 item::item(char *aName, double aWeight)
 {
+    int length = strlen(aName);
+    name = new char[length + 1];
     strcpy(name, aName);
-    weight = weight;
+    weight = aWeight;
 }
 
 item::item()
 {
     weight = 0;
-    qty = 1;
+    name = NULL;
 }

@@ -1,2 +1,2 @@
 program:
-	g++ main.cpp -o main.out
+	g++ -w main.cpp -o main.out
