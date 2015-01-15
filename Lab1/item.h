@@ -12,13 +12,13 @@
 
 class item {
 public:
-    item(char *name, double weight);
+    item(char *name, float weight);
     char *name;
-    double weight;
+    float weight;
     item();
 };
 
-item::item(char *aName, double aWeight)
+item::item(char *aName, float aWeight)
 {
     int length = strlen(aName);
     name = new char[length + 1];

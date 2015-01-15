@@ -44,7 +44,7 @@ private:
     node    *head;
     int     MaxWeight;
     int     ItemCount;
-    int     CurrentWeight;
+    float     CurrentWeight;
 };
 
 inventory::inventory()
@@ -93,7 +93,11 @@ void inventory::PrintInventory()
 void inventory::AddItem(item NewItem)
 { 
     if (NewItem.weight <= MaxWeight - CurrentWeight) {
-        if (ItemCount == 0) { // No list exists, assign to head
+       
+        ItemCount++;
+        CurrentWeight = CurrentWeight + NewItem.weight; 
+
+        if (ItemCount - 1 == 0) { // No list exists, assign to head
             head->data = NewItem;
             head->qty++;
         } else { 
@@ -102,9 +106,7 @@ void inventory::AddItem(item NewItem)
             /* Check for matching node first, then we can just increment qty */  
             char *LowerNewName = ToLower(NewItem.name);
             node *traverse(head);
-
             while (traverse->next != NULL) {
-                cout << "Comparing " << LowerNewName << " and " << traverse->data.name << endl;
                 if (strcmp(LowerNewName, traverse->data.name) == 0) {
                     traverse->qty++;
                     return;
@@ -121,7 +123,6 @@ void inventory::AddItem(item NewItem)
 
             /* Bummer, no existing item with that name, so time for a new node */
             traverse = head; // Reset
-            
             node *NewNode;
             NewNode = new node;
             NewNode->data = NewItem;
@@ -148,20 +149,25 @@ void inventory::AddItem(item NewItem)
             }
             /* Again, a check on the last entry */
             if (strcmp(NewNode->data.name, traverse->data.name) < 0) {
-                traverse->prev->next = NewNode;
-                traverse->prev = NewNode;
-                NewNode->next = traverse;
+                if (traverse->prev == NULL) { // It's head 
+                    NewNode->next = head;
+                    NewNode->prev = NULL;
+                    head->next = NULL;
+                    head = NewNode;
+                } else {
+                    traverse->prev->next = NewNode;
+                    traverse->prev = NewNode;
+                    NewNode->next = traverse;
+                }
                 return;
-            
+            }
             /* The new node isn't alphabetically lower than anything, so it should be placed last */
-            } else {
+            else {
                 traverse->next = NewNode;
                 NewNode->prev = traverse;
                 NewNode->next = NULL;
             }
-        }
-        ItemCount++;
-        CurrentWeight = CurrentWeight + NewItem.weight; 
+        } 
     } else { // Too heavy to pick up
         cout << "You're not strong enough to pick up the " << NewItem.name << " with everything else you're carrying." << endl;
     }
@@ -171,27 +177,33 @@ void inventory::AddItem(item NewItem)
 void inventory::RemoveItem(char *name)
 {
     char *LowerName = ToLower(name);
+
     if (ItemCount > 0) {
-        cout << "Removing " << name << "." << endl;
         ItemCount--;
         
         /* Traverse the list looking for node with the same name */
-        node *traverse;
-        traverse = new node;
-        traverse = head;
+        node *traverse(head);
 
         while (traverse->next != NULL) {
             if (strcmp(LowerName, traverse->data.name) == 0) { // Found a match
                 if (traverse->qty > 1) { // If there's more than one, just decrement
                     traverse->qty--;
                 } else { // If there's just one, remove the node
-                    traverse->prev->next = traverse->next;
-                    traverse->next->prev = traverse->prev;
-                    delete traverse;
-                    traverse = NULL;
+                    if (traverse->prev == NULL) { // It's head
+                        traverse->next->prev = NULL;
+                        head = traverse->next;
+                    } else if (traverse->next == NULL) { // It's tail
+                        traverse->prev->next = NULL;
+                    } else {
+                        traverse->prev->next = traverse->next;
+                        traverse->next->prev = traverse->prev;
+                    }
                 }
                 CurrentWeight = CurrentWeight - traverse->data.weight;
                 cout << "You dropped a " << traverse->data.name << "." << endl;
+                delete traverse;
+                traverse = NULL;
+                return;
             }
             traverse = traverse->next;
         }
@@ -202,11 +214,12 @@ void inventory::RemoveItem(char *name)
                 traverse->qty--;
             } else { // If there's just one, remove the last node
                 traverse->prev->next = NULL;
-                delete traverse;
-                traverse = NULL;
             }
             CurrentWeight = CurrentWeight - traverse->data.weight;
             cout << "You dropped a " << traverse->data.name << "." << endl;
+            delete traverse;
+            traverse = NULL;
+            return;
         }
         /* Couldn't find the item anywhere in the list */
         cout << "You don't have a " << LowerName << " in your inventory." << endl;
@@ -238,4 +251,4 @@ char *ToLower(char *string)
     for (i = 0; i < length; i++)
         LowerString[i] = tolower(string[i]);    
     return LowerString;
-}   
+}  
