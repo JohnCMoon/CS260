@@ -1,4 +1,5 @@
 /*
+ *
  * File: inventory.h
  *
  * Author: John Moon <john.moon1@pcc.edu>
@@ -14,235 +15,216 @@
 
 using namespace std;
 
-char *ToLower(char *string);
+char *StrToLower(char *string);
 
 struct node {
-    item    data;
+    item    *data;
     node    *next;
     node    *prev;
     int     qty;
     node();
-    node(*Cnode);
 };
 
 node::node()
 {
-    next=NULL;
-    prev=NULL;
+    data = new item;
+    next = NULL;
+    prev = NULL;
+    qty = 1;
 }
 
 class inventory {
 public:
-    void AddItem(item NewItem);
+    void AddItem(item newItem);
     void RemoveItem(char *name);
+    bool SearchForMatch(char *searchStr, node *searchNode);
+    bool SearchForAlphaLower(char *searchStr, node *searchNode);
     void PrintInventory();
     int GetCount();
     int GetWeight();
     inventory();
     inventory(int UserMaxWeight);
 private:
-    node    *head;
-    int     MaxWeight;
-    int     ItemCount;
-    float     CurrentWeight;
+    node        *head;
+    int         maxWeight;
 };
 
 inventory::inventory()
 {
     head = new node;
-    MaxWeight = 100;
-    ItemCount = 0;
-    CurrentWeight = 0;
+    maxWeight = 100;
 }
 
 /* Able to pass max weight through this constructor */
-inventory::inventory(int UserMaxWeight)
+inventory::inventory(int userMaxWeight)
 {
-    if (UserMaxWeight > 0 && UserMaxWeight < INT_MAX) {
-        MaxWeight = UserMaxWeight;
+    head = new node;
+    if (userMaxWeight > 0 && userMaxWeight < INT_MAX) {
+        maxWeight = userMaxWeight;
     } else {
         cout << "error: weight not within bounds - defaulting to 100" << endl;
-        MaxWeight = 100;
+        maxWeight = 100;
     }
-    ItemCount = 0;
-    CurrentWeight = 0;
 }
 
 void inventory::PrintInventory()
 {
+
     cout << "Current inventory:" << endl;
 
-    if (ItemCount > 0) {
+    if (GetCount() > 0) {
         node *traverse(head);
      
         while (traverse->next != NULL) {
             cout << "\t[" << traverse->qty << "] ";
-            cout << traverse->data.name << endl;
+            cout << traverse->data->name << endl;
             traverse = traverse->next;
         }
         
         /* Printing last node */
         cout << "\t[" << traverse->qty << "] ";
-        cout << traverse->data.name << endl;
+        cout << traverse->data->name << endl;
+    } else {
+        cout << "\t(no items)" << endl << endl;
     }
 
     cout << "Total items: " << GetCount() << endl;
     cout << "Total weight: " << GetWeight() << endl << endl;
 }
 
-void inventory::AddItem(item NewItem)
-{ 
-    if (NewItem.weight <= MaxWeight - CurrentWeight) {
-       
-        ItemCount++;
-        CurrentWeight = CurrentWeight + NewItem.weight; 
+void inventory::AddItem(item newItem)
+{
+    if (head->data == NULL) {
+        head->data = &newItem;
+    } else {
 
-        if (ItemCount - 1 == 0) { // No list exists, assign to head
-            head->data = NewItem;
-            head->qty++;
-        } else { 
+        node *traverse(head);
+        char *lowerName = StrToLower(newItem.name);
 
-            /* One or more items already in list */
-            /* Check for matching node first, then we can just increment qty */  
-            char *LowerNewName = ToLower(NewItem.name);
-            node *traverse(head);
-            while (traverse->next != NULL) {
-                if (strcmp(LowerNewName, traverse->data.name) == 0) {
-                    traverse->qty++;
-                    return;
-                } else {
-                    traverse->next->prev = traverse;
-                    traverse = traverse->next;
-                }
-            }
-            /* One more check on the last entry */
-            if (strcmp(LowerNewName, traverse->data.name) == 0) {
-                    traverse->qty++;
-                    return;
-            }
-
-            /* Bummer, no existing item with that name, so time for a new node */
-            traverse = head; // Reset
-            node *NewNode;
-            NewNode = new node;
-            NewNode->data = NewItem;
-            NewNode->qty = 1;
-
-            /* Now we must traverse the list again to find where to insert the node (alphabetically) */
-            while (traverse->next != NULL) {
-                if (strcmp(NewNode->data.name, traverse->data.name) < 0) { // It's alphabetically lower
-                    if (traverse->prev == NULL) { // It's head
-                        head->prev = NewNode;
-                        NewNode->next = head;
-                        head = NewNode;
-                        return;
-                    } else {
-                        traverse->prev->next = NewNode;
-                        traverse->prev = NewNode;
-                        NewNode->next = traverse;
-                        return;
+        if (GetWeight() + newItem.weight <= maxWeight) {
+        
+            /* If there's a match, we can just increment the qty */
+            if (SearchForMatch(lowerName, traverse)) {
+                traverse->qty++;
+            } else {
+            
+                /* No matches, so time to create a new node and insert it */
+                node *newNode;
+                newNode = new node;
+                newNode->data = &newItem;
+                traverse = head; // Reset
+                
+                if (SearchForAlphaLower(lowerName, traverse)) {
+                    if (traverse->prev == NULL) { // Head is alphabetically lower, so insert as head
+                        head->prev = newNode;
+                        newNode->next = head;
+                        head = newNode;
+                    } else {                      // Insert somewhere in the middle of the list
+                        newNode->prev = traverse->prev;
+                        newNode->next = traverse;
+                        traverse->prev->next = newNode;
+                        traverse->prev = newNode;
                     }
-                } else {
-                    traverse->next->prev = traverse;
-                    traverse = traverse->next;
+                } else {                          // Nothing alphabetically lower, so insert at end of list
+                    traverse->next = newNode;
+                    newNode->prev = traverse;
                 }
             }
-            /* Again, a check on the last entry */
-            if (strcmp(NewNode->data.name, traverse->data.name) < 0) {
-                if (traverse->prev == NULL) { // It's head 
-                    NewNode->next = head;
-                    NewNode->prev = NULL;
-                    head->next = NULL;
-                    head = NewNode;
-                } else {
-                    traverse->prev->next = NewNode;
-                    traverse->prev = NewNode;
-                    NewNode->next = traverse;
-                }
-                return;
-            }
-            /* The new node isn't alphabetically lower than anything, so it should be placed last */
-            else {
-                traverse->next = NewNode;
-                NewNode->prev = traverse;
-                NewNode->next = NULL;
-            }
-        } 
-    } else { // Too heavy to pick up
-        cout << "You're not strong enough to pick up the " << NewItem.name << " with everything else you're carrying." << endl;
+            traverse = NULL;
+        } else {
+            cout << "You're not strong enough to pick up the " << newItem.name << " with everything else you're carrying." << endl;
+        }
     }
-    return;
 }
 
 void inventory::RemoveItem(char *name)
 {
-    char *LowerName = ToLower(name);
+    node *traverse(head);
+    char *lowerName = StrToLower(name);
 
-    if (ItemCount > 0) {
-        ItemCount--;
-        
-        /* Traverse the list looking for node with the same name */
-        node *traverse(head);
-
-        while (traverse->next != NULL) {
-            if (strcmp(LowerName, traverse->data.name) == 0) { // Found a match
-                if (traverse->qty > 1) { // If there's more than one, just decrement
-                    traverse->qty--;
-                } else { // If there's just one, remove the node
-                    if (traverse->prev == NULL) { // It's head
-                        traverse->next->prev = NULL;
-                        head = traverse->next;
-                    } else if (traverse->next == NULL) { // It's tail
-                        traverse->prev->next = NULL;
-                    } else {
-                        traverse->prev->next = traverse->next;
-                        traverse->next->prev = traverse->prev;
-                    }
+    if (SearchForMatch(lowerName, traverse)) {
+        if (traverse->qty > 1) { // Can simply decrement the quantity
+            traverse->qty--;
+        } else {
+            if (traverse->prev == NULL) {        // Traverse is head
+                if (traverse->next == NULL) {    //  --- Head is the only one, so  make a new node in its place
+                    node *newHead;
+                    newHead = new node;
+                    head = newHead;
+                } else {                         //  --- Head ain't the only one
+                    traverse->next->prev = NULL;
+                    head = traverse->next;
                 }
-                CurrentWeight = CurrentWeight - traverse->data.weight;
-                cout << "You dropped a " << traverse->data.name << "." << endl;
-                delete traverse;
-                traverse = NULL;
-                return;
-            }
-            traverse = traverse->next;
-        }
-        
-        /* Now for the last one */
-        if (strcmp(LowerName, traverse->data.name) == 0) { // Found a match
-            if (traverse->qty > 1) { // If there's more than one, just decrement
-                traverse->qty--;
-            } else { // If there's just one, remove the last node
+            } else if (traverse->next == NULL) { // Traverse is the last node
                 traverse->prev->next = NULL;
+            } else {                             // Traverse is not the first or last node
+                traverse->next->prev = traverse->prev;
+                traverse->prev->next = traverse->next;
             }
-            CurrentWeight = CurrentWeight - traverse->data.weight;
-            cout << "You dropped a " << traverse->data.name << "." << endl;
             delete traverse;
             traverse = NULL;
-            return;
         }
-        /* Couldn't find the item anywhere in the list */
-        cout << "You don't have a " << LowerName << " in your inventory." << endl;
+    }
+}
+
+bool inventory::SearchForMatch(char *searchStr, node *searchNode)
+{
+    if (strcmp(searchStr, searchNode->data->name) == 0) {
+        return true;
     } else {
-    /* Empty inventory */
-    cout << "You don't have a " << LowerName << " in your inventory." << endl;
+        if (searchNode->next == NULL) {
+            return false;
+        } else {
+            searchNode = searchNode->next;
+            SearchForMatch(searchStr, searchNode);
+        }
+    }
+}
+
+bool inventory::SearchForAlphaLower(char *searchStr, node *searchNode)
+{
+    if (strcmp(searchStr, searchNode->data->name) < 0) {
+        return true;
+    } else {
+        if (searchNode->next == NULL) {
+            return false;
+        } else {
+            searchNode = searchNode->next;
+            SearchForAlphaLower(searchStr, searchNode);
+        }
     }
 }
 
 /* Outputs traverse number of items in the inventory */
 int inventory::GetCount()
 {
-    return ItemCount;
+    int sum = 0;
+    node *traverse(head);
+    while (traverse->next != NULL) {
+        sum++;
+        traverse = traverse->next;
+    }
+    if (traverse->data != NULL)
+        sum++;
+    return sum;
 }
 
 /* Outputs current sum weight of all items in the inventory */
 int inventory::GetWeight()
 {
-    return CurrentWeight;
+    float sum = 0;
+    node *traverse(head);
+    while (traverse->next != NULL) {
+        sum = sum + traverse->data->weight;
+        traverse = traverse->next;
+    }
+    if (traverse->data != NULL)
+        sum = sum + traverse->data->weight; // Getting the last entry
+    return sum;
 }
 
 /* Converts string to all lowercase characters */
-char *ToLower(char *string)
+char *StrToLower(char *string)
 {
     int length = strlen(string);
     char *LowerString;
