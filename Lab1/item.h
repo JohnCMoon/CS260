@@ -12,10 +12,11 @@
 
 class item {
 public:
-    item(char *name, float weight);
     char *name;
     float weight;
     item();
+    item(char *name, float weight);
+//    ~item();
 };
 
 item::item(char *aName, float aWeight)
@@ -29,5 +30,12 @@ item::item(char *aName, float aWeight)
 item::item()
 {
     weight = 0;
-    name = NULL;
+    name = nullptr;
 }
+
+/*
+item::~item()
+{
+    delete [] name;
+}
+*/
