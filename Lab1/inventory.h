@@ -19,7 +19,7 @@ using namespace std;
 char *StrToLower(char *string);
 
 struct node {
-    item    *data;
+    item    data;
     node    *next;
     node    *prev;
     int     qty;
@@ -29,16 +29,16 @@ struct node {
 
 node::node()
 {
-    data = nullptr;
     next = nullptr;
     prev = nullptr;
     qty = 1;
 }
 
 node::~node()
-{
-    delete [] data->name;
-    delete data;
+{   
+    data.deleteName();
+    next = nullptr;
+    prev = nullptr;
     qty = 0;
 }
 
@@ -51,17 +51,21 @@ public:
     void PrintInventory();
     int GetCount();
     float GetWeight();
+    void delNode(node *toDel);
+    void delList(node *head);
     inventory();
     inventory(int UserMaxWeight);
     ~inventory();
 private:
     node    *head;
     int     maxWeight;
+    bool    headActive;
 };
 
 inventory::inventory()
 {
     head = new node;
+    headActive = false;
     maxWeight = 100;
 }
 
@@ -69,6 +73,7 @@ inventory::inventory()
 inventory::inventory(int userMaxWeight)
 {
     head = new node;
+    headActive = false;
     if (userMaxWeight > 0 && userMaxWeight < INT_MAX) {
         maxWeight = userMaxWeight;
     } else {
@@ -81,39 +86,32 @@ inventory::~inventory()
 {
     node *traverse(head);
     while (traverse->next != nullptr) {
-        head = traverse->next;
-        delete traverse;
-        traverse = head;
-        head->prev = nullptr;
+        traverse = traverse->next;
+        delete traverse->prev;
+        traverse->prev = nullptr;
     }
-    delete head->data;
-    head->data = nullptr;
-    head->prev = nullptr;
+    delete traverse;
+    traverse = nullptr;
+    head = nullptr;
+    headActive = false;
 }
 
 void inventory::PrintInventory()
 {
 
-    cout << "Creating a new item." << endl;
-    item *newItem;
-    newItem = new item;
-    cout << "Deleting the new item." << endl;
-    delete newItem;
-    newItem = nullptr;
-    
     cout << endl << "Current inventory:" << endl;
 
     if (GetCount() > 0) {
         node *traverse(head); 
         while (traverse->next != nullptr) {
             cout << "\t[" << traverse->qty << "] ";
-            cout << traverse->data->name << endl;
+            cout << traverse->data.name << endl;
             traverse = traverse->next;
         }
         
         /* Printing last node */
         cout << "\t[" << traverse->qty << "] ";
-        cout << traverse->data->name << endl;
+        cout << traverse->data.name << endl;
     
         cout << "Total items: " << GetCount() << endl;
         cout << "Total weight: " << GetWeight() << endl << endl;
@@ -124,16 +122,12 @@ void inventory::PrintInventory()
 
 void inventory::AddItem(item newItem)
 {
-    /* Allocating own memory since newItem wasn't passed by ref */
-    item *newItemP;
-    newItemP = new item;
-    *newItemP = newItem;    
-
-    if (head->data == nullptr) {
-        head->data = newItemP;
+    if (!headActive) {
+        head->data = newItem;
+        headActive = true;
         cout << "You picked up a " << newItem.name << "." << endl;
     } else {
-        if (GetWeight() + newItemP->weight <= maxWeight) {
+        if (GetWeight() + newItem.weight <= maxWeight) {
         
             char *lowerName = StrToLower(newItem.name);
             node *traverse(head);
@@ -142,20 +136,21 @@ void inventory::AddItem(item newItem)
 
             /* If there's a match, we can just increment the qty */
             if (SearchForMatch(lowerName, traverse, matchPtr)) {
-                if (newItemP->weight == match->data->weight) {
+                if (newItem.weight == match->data.weight) {
                     match->qty++;
                     cout << "You picked up a " << newItem.name << "." << endl;
                 } else {
                     cout << "ERROR: tried to add a duplicate item with wrong weight!" << endl;
                 }
+                newItem.deleteName();
             } else {
             
                 /* No matches, so time to create a new node and insert it */
                 node *newNode;
                 newNode = new node;
-                newNode->data = newItemP;
+                newNode->data = newItem;
                 traverse = head; // Reset
-                
+
                 if (SearchForAlphaLower(lowerName, traverse, matchPtr)) {
                     if (match->prev == nullptr) { // newNode is lower than head, so insert as head
                         head->prev = newNode;
@@ -181,6 +176,7 @@ void inventory::AddItem(item newItem)
             lowerName = nullptr;
         } else {
             cout << "You're not strong enough to pick up the " << newItem.name << " with everything else you're carrying." << endl;
+            delete [] newItem.name;
         }
     }
 }
@@ -196,21 +192,26 @@ void inventory::RemoveItem(char *name)
         if (match->qty > 1) { // Can simply decrement the quantity
             match->qty--;
         } else {
-            if (match->prev == nullptr) {        // match is head
-                if (match->next == nullptr) {    //  --- Head is the only one, so  make a new node in its place
-                    head = new node;
-                } else {                         //  --- Head ain't the only one
-                    match->next->prev = nullptr;
+            match->data.deleteName();
+            if (match == head) {
+                if (head->next == nullptr) {
+                    headActive = false;          // Head is the only one, so delete its data       
+                } else {                         // Head is not the only one.
                     head = traverse->next;
+                    head->prev = nullptr;
+                    delete match;
+                    match = nullptr;
                 }
             } else if (match->next == nullptr) { // match is the last node
                 match->prev->next = nullptr;
+                delete match;
+                match = nullptr;
             } else {                             // match is not the first or last node
                 match->next->prev = match->prev;
                 match->prev->next = match->next;
+                delete match;
+                match = nullptr;
             }
-            delete match;
-            match = nullptr;
             matchPtr = nullptr;
             traverse = nullptr;
         }
@@ -223,8 +224,8 @@ void inventory::RemoveItem(char *name)
 }
 
 bool inventory::SearchForMatch(char *searchStr, node *searchNode, node **matchPtr)
-{   
-    if (strcmp(searchStr, searchNode->data->name) == 0) {
+{
+    if (strcmp(searchStr, searchNode->data.name) == 0) {
         *matchPtr = searchNode;
         return true;
     } else {
@@ -240,7 +241,7 @@ bool inventory::SearchForMatch(char *searchStr, node *searchNode, node **matchPt
 
 bool inventory::SearchForAlphaLower(char *searchStr, node *searchNode, node **matchPtr)
 {
-    if (strcmp(searchStr, searchNode->data->name) < 0) {
+    if (strcmp(searchStr, searchNode->data.name) < 0) {
         *matchPtr = searchNode;
         return true;
     } else {
@@ -258,7 +259,7 @@ int inventory::GetCount()
 {
     int sum = 0;
     node *traverse(head);
-    if (head->data != nullptr) {
+    if (headActive) {
         while (traverse->next != nullptr) {
             sum = sum + traverse->qty;
             traverse = traverse->next;
@@ -272,13 +273,14 @@ int inventory::GetCount()
 float inventory::GetWeight()
 {
     float sum = 0;
-    node *traverse(head);
-    while (traverse->next != nullptr) {
-        sum = sum + traverse->data->weight * traverse->qty;
-        traverse = traverse->next;
+    if (headActive) {
+        node *traverse(head);
+        while (traverse->next != nullptr) {
+            sum = sum + traverse->data.weight * traverse->qty;
+            traverse = traverse->next;
+        }
+        sum = sum + traverse->data.weight * traverse->qty; // Getting the last entry
     }
-    if (traverse->data != nullptr)
-        sum = sum + traverse->data->weight * traverse->qty; // Getting the last entry
     return sum;
 }
 
@@ -287,7 +289,7 @@ char *StrToLower(char *string)
 {
     int length = strlen(string);
     char *lowerString;
-    lowerString = new char[length];
+    lowerString = new char[length + 1];
     int i;
     for (i = 0; i < length; i++)
         lowerString[i] = tolower(string[i]);

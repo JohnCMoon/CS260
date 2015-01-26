@@ -24,6 +24,7 @@ void RemoveItem(inventory& inv,char* name)
 
 void doTestBasic() 
 {
+    cout << "STARTING BASIC TEST" << endl << endl;
 	inventory inv;
 
 	// Make sure printing an empty inventory works
@@ -52,10 +53,12 @@ void doTestBasic()
 	RemoveItem(inv,"helmet");
 	RemoveItem(inv,"bracelet of power");
 	inv.PrintInventory();
+    cout << "DONE WITH BASIC TEST" << endl << endl;
 }
 
 void doTestAdvanced() 
 {
+    cout << "STARTING ADVANCED TEST" << endl << endl;
 	inventory inv;
 
 	// Add items in reverse order
@@ -87,10 +90,12 @@ void doTestAdvanced()
 	RemoveItem(inv,"HELMET");
 	inv.PrintInventory();
 
+    cout << "DONE WITH ADVANCED TEST" << endl << endl;
 }
 
 void doTestBadData() 
 {
+    cout << "STARTING BAD DATA TEST" << endl << endl;
 	inventory inv(50);
 
 	// Adding too much
@@ -108,6 +113,7 @@ void doTestBadData()
 	AddItem(inv,"helmet",1.0);
 	AddItem(inv,"helmet",10.0);
 	inv.PrintInventory();
+    cout << "DONE WITH BAD DATA TEST" << endl << endl;
 }
 
 int main() {

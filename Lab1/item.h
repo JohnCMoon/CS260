@@ -16,7 +16,7 @@ public:
     float weight;
     item();
     item(char *name, float weight);
-//    ~item();
+    void deleteName();
 };
 
 item::item(char *aName, float aWeight)
@@ -33,9 +33,11 @@ item::item()
     name = nullptr;
 }
 
-/*
-item::~item()
+void item::deleteName()
 {
-    delete [] name;
+   if (name != nullptr) {
+        delete [] name;
+        name = nullptr;
+    }
+    weight = 0;
 }
-*/
