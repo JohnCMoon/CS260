@@ -7,14 +7,15 @@ public:
     Potion *GetTop();
     Potion *pop();
     int GetCount();
+    int GetRemainingSpace();
 private:
-    int MaxStack;
+    int maxStack;
     Potion *top;
 };
 
 void stack::InitStack(int max)
 {
-    int MaxStack = max;
+    int maxStack = max;
     top = new Potion;
 }
 
@@ -28,7 +29,7 @@ bool stack::isEmptyStack()
 
 bool stack::isFullStack()
 {
-    if (GetCount() == MaxStack)
+    if (GetCount() == maxStack)
         return true;
     else
         return false;
@@ -66,4 +67,11 @@ int stack::GetCount()
     if (tmp->GetType() != UNKNOWN)
         count++;
     return count;
+}
+
+int stack::GetRemainingSpace()
+{
+    int spaceRemaining;
+    spaceRemaining = maxStack - GetCount();
+    return spaceRemaining;
 }

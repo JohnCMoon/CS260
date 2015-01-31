@@ -15,6 +15,9 @@ class Potion {
 public:
     PotionType GetType();
     Potion();
+    Potion(PotionType aType);
+    void SetType(PotionType aType);
+//    friend std::ostream& operator<<(ostream&, const &Potion);
     Potion *next;
     Potion *prev;
 private:
@@ -28,7 +31,24 @@ Potion::Potion()
     prev = nullptr;
 }
 
+Potion::Potion(PotionType aType)
+{
+    type = aType;
+    next = nullptr;
+    prev = nullptr;
+}
+
 PotionType Potion::GetType()
 {
     return type;
 }
+
+void Potion::SetType(PotionType aType)
+{
+    type = aType;
+}  
+
+//std::ostream &operator<<(ostream& osOperator, const &Potion potionAddr)
+//{
+//    return("Potion of " << PotionTypeString(potionAddr) << endl);
+//}

@@ -46,16 +46,39 @@ Apothecary::Apothecary(int aShelfLimit, int aOrderLimit)
     OrderLimit = aOrderLimit;
 }
 
-bool Apothecary::OrderPotion(PotionType potion)
+/* Takes the potion type argument and adds a potion of that type to the end */
+/* of the queue. */
+bool Apothecary::OrderPotion(PotionType newPotionType)
 {
-    return true;
+    Potion *newPotion;
+    newPotion = new Potion;
+    newPotion->SetType(newPotionType);
+    if (InQueue.AddPotion(newPotion)) {
+        return true;
+    } else {
+        delete newPotion;
+        newPotion = nullptr;
+        return false;
+    }
 }
 
+/* Takes the queue of orders and turns them into on the shelf potions. */
 int Apothecary::MakePotions()
 {
-    return 5;
+    int maxCanMake = OnShelf.GetRemainingSpace();
+    int i;
+    for (i = 0; i <= maxCanMake; i++) {
+        if (!InQueue.isEmptyQueue()) {
+            Potion *freshPotion = InQueue.RemPotion();
+            OnShelf.push(freshPotion);
+        } else {
+            break;
+        }
+    } 
+    return i;
 }
 
+/* Pops one potion off the stack */
 bool Apothecary::BuyPotion(Potion &potion)
 {
     return true;

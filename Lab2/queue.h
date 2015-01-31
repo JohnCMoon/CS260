@@ -5,7 +5,7 @@ public:
     bool isFullQueue();
     Potion *GetFront();
     Potion *GetBack();
-    void AddPotion(Potion *newPotion);
+    bool AddPotion(Potion *newPotion);
     Potion *RemPotion();
     int GetCount();
 private:
@@ -48,12 +48,24 @@ Potion *queue::GetBack()
     return back;
 }
 
-void queue::AddPotion(Potion *newPotion)
+bool queue::AddPotion(Potion *newPotion)
 {
-    back->next = newPotion;
-    newPotion->prev = back;
-    newPotion->next = nullptr;
-    back = newPotion;
+    if (!isFullQueue()) {
+        if (isEmptyQueue()) {
+            front = newPotion;
+            back = newPotion;
+        } else {
+            back->next = newPotion;
+            newPotion->prev = back;
+            newPotion->next = nullptr;
+            back = newPotion;
+        }
+        return true;
+    } else {
+        delete newPotion;
+        newPotion = nullptr;
+        return false;
+    }
 }
 
 Potion *queue::RemPotion()
