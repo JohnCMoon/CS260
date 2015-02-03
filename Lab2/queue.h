@@ -70,17 +70,14 @@ bool queue::AddPotion(Potion *newPotion)
 
 Potion *queue::RemPotion()
 {
-    // Something in here is causing GetCount to fault. Going from 1 potion to 0 I think
     Potion *tmp(front);
-    //if (front != back) {
+    if (front->next == nullptr) {
+        PotionType nullType = UNKNOWN;
+        front->SetType(nullType);
+    } else {
         front = front->next;
         front->prev = nullptr;
-    //} else {
-        //PotionType nullType = UNKNOWN;
-        //front->SetType(nullType);
-        //front->prev = nullptr;
-        //front->next = nullptr;
-    //}
+    }
     return tmp;
 }
 
@@ -89,12 +86,11 @@ int queue::GetCount()
     int count = 0;
     Potion *tmp(front);
     while (tmp->next != nullptr) {
-        count++; 
+        count++;
         tmp = tmp->next;
     }
     if (tmp->GetType() != UNKNOWN) {
         count++;
     }
-    std::cout << "Queuecount = " << count << std::endl;
     return count;
 }

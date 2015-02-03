@@ -36,7 +36,7 @@ void BuyPotion(Apothecary& apo)
 	Potion potion;
 	if (apo.BuyPotion(potion)) {
 		cout << "Congratulations! You just bought a " << PotionTypeString(potion.GetType()) << " potion!" << endl;
-		//cout << potion;
+		cout << potion;
 	} else {
 		cout << "There were no potions available." << endl;
 	}

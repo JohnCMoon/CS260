@@ -71,6 +71,7 @@ int Apothecary::MakePotions()
         if (!InQueue.isEmptyQueue()) {
             Potion *freshPotion = InQueue.RemPotion();
             OnShelf.push(freshPotion);
+            cout << "Made a " << freshPotion->GetType() << " potion" << endl;
         } else {
             break;
         }
