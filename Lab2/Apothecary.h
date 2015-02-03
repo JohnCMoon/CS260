@@ -67,7 +67,7 @@ int Apothecary::MakePotions()
 {
     int maxCanMake = OnShelf.GetRemainingSpace();
     int i;
-    for (i = 0; i <= maxCanMake; i++) {
+    for (i = 0; i < maxCanMake; i++) {
         if (!InQueue.isEmptyQueue()) {
             Potion *freshPotion = InQueue.RemPotion();
             OnShelf.push(freshPotion);
@@ -81,5 +81,8 @@ int Apothecary::MakePotions()
 /* Pops one potion off the stack */
 bool Apothecary::BuyPotion(Potion &potion)
 {
-    return true;
+    if(OnShelf.pop())
+        return true;
+    else
+        return false;
 }

@@ -5,7 +5,7 @@ public:
     bool isFullStack();
     bool push(Potion *newPotion);
     Potion *GetTop();
-    Potion *pop();
+    bool pop();
     int GetCount();
     int GetRemainingSpace();
 private:
@@ -15,8 +15,10 @@ private:
 
 void stack::InitStack(int max)
 {
-    int maxStack = max;
+    maxStack = max;
     top = new Potion;
+    top->next = nullptr;
+    top->prev = nullptr;
 }
 
 bool stack::isEmptyStack()
@@ -48,19 +50,24 @@ Potion *stack::GetTop()
     return top;
 }
 
-Potion *stack::pop()
+bool stack::pop()
 {
-    Potion *tmp(top);
-    top = top->next;
-    top->prev = nullptr;
-    return tmp;
+    if (!isEmptyStack()) {
+        Potion *tmp(top);
+        top = top->next;
+        top->prev = nullptr;
+        delete tmp;
+        tmp = nullptr;
+    } else {
+        return false;
+    }
 }
 
 int stack::GetCount()
 {
     int count = 0;
     Potion *tmp(top);
-    while (tmp->next != nullptr) {
+    while (tmp->next != nullptr && tmp->GetType() != UNKNOWN) {
         count++;
         tmp = tmp->next;
     }
@@ -71,7 +78,7 @@ int stack::GetCount()
 
 int stack::GetRemainingSpace()
 {
-    int spaceRemaining;
+    int spaceRemaining = 0;
     spaceRemaining = maxStack - GetCount();
     return spaceRemaining;
 }
