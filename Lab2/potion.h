@@ -21,7 +21,7 @@ public:
     Potion *next;
     Potion *prev;
     friend std::ostream& operator<<(std::ostream& osObject, const Potion &potionAddr);
-    private:
+private:
     PotionType type;
 };
 

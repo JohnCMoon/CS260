@@ -66,8 +66,12 @@ bool queue::AddPotion(Potion *newPotion)
 {
     if (!isFullQueue()) {
         if (isEmptyQueue()) {
-            front = newPotion;
-            back = newPotion;
+            front->SetType(newPotion->GetType());
+            front->next = newPotion->next;
+            front->prev = newPotion->prev;
+            back = front;
+            delete newPotion;
+            newPotion = nullptr;
         } else {
             back->next = newPotion;
             newPotion->prev = back;
@@ -84,8 +88,8 @@ PotionType queue::RemPotion()
 {
     PotionType type = front->GetType();
     if (front->next == nullptr) {
-        PotionType nullType = UNKNOWN;
-        front->SetType(nullType);
+        delete front;
+        InitQueue(maxQueue); // Removing last one in queue, so reinitialize
     } else {
         front = front->next;
         delete front->prev;
@@ -105,5 +109,5 @@ int queue::GetCount()
     if (tmp->GetType() != UNKNOWN) {
         count++;
     }
-    return count;
+    return count; 
 }

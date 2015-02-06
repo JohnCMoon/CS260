@@ -77,7 +77,7 @@ int Apothecary::MakePotions()
             freshPotion = new Potion;
             freshPotion->SetType(InQueue.RemPotion());
             OnShelf.push(freshPotion);
-            cout << "Made a " << PotionTypeString(freshPotion->GetType()) << " potion" << endl;
+            cout << "Made a " << PotionTypeString(freshPotion->GetType()) << " potion." << endl;
             potionsMade++;
         }
     }
