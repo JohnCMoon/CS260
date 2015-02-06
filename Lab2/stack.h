@@ -1,13 +1,21 @@
+/*
+ * File: stack.h
+ *
+ * Author: John Moon <john.moon1@pcc.edu>
+ *
+ * Purpose: Implements the stack ADT.
+ *
+ */
+
 class stack {
 public:
     void InitStack(int max);
     bool isEmptyStack();
     bool isFullStack();
     bool push(Potion *newPotion);
-    Potion *GetTop();
-    bool pop();
+    bool pop(Potion &potion);
     int GetCount();
-    int GetRemainingSpace();
+    ~stack();
 private:
     int maxStack;
     Potion *top;
@@ -19,6 +27,19 @@ void stack::InitStack(int max)
     top = new Potion;
     top->next = nullptr;
     top->prev = nullptr;
+}
+
+stack::~stack()
+{
+    Potion *tmp(top);
+    while (tmp->next != nullptr) {
+        tmp = tmp->next;
+        delete tmp->prev;
+        tmp->prev = nullptr;
+    }
+    delete tmp;
+    tmp = nullptr;
+    top = nullptr;
 }
 
 bool stack::isEmptyStack()
@@ -39,25 +60,30 @@ bool stack::isFullStack()
 
 bool stack::push(Potion *newPotion)
 {
-    top->prev = newPotion;
-    newPotion->next = top;
-    newPotion->prev = nullptr;
-    top = newPotion;
+    if (!isFullStack()) {
+        top->prev = newPotion;
+        newPotion->next = top;
+        newPotion->prev = nullptr;
+        top = newPotion;
+        return true;
+    } else {
+        return false;
+    }
 }
 
-Potion *stack::GetTop()
-{
-    return top;
-}
-
-bool stack::pop()
+bool stack::pop(Potion &potion)
 {
     if (!isEmptyStack()) {
-        Potion *tmp(top);
-        top = top->next;
-        top->prev = nullptr;
-        delete tmp;
-        tmp = nullptr;
+        if (top->next == nullptr) {
+            PotionType nullType = UNKNOWN;
+            top->SetType(nullType);
+        } else {
+            top = top->next;
+            potion = *top->prev;
+            delete top->prev;
+            top->prev = nullptr;
+        }
+        return true;
     } else {
         return false;
     }
@@ -67,18 +93,11 @@ int stack::GetCount()
 {
     int count = 0;
     Potion *tmp(top);
-    while (tmp->next != nullptr && tmp->GetType() != UNKNOWN) {
+    while (tmp->next != nullptr) {
         count++;
         tmp = tmp->next;
     }
     if (tmp->GetType() != UNKNOWN)
         count++;
     return count;
-}
-
-int stack::GetRemainingSpace()
-{
-    int spaceRemaining = 0;
-    spaceRemaining = maxStack - GetCount();
-    return spaceRemaining;
 }

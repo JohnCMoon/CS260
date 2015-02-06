@@ -38,7 +38,7 @@ Apothecary::Apothecary()
     OrderLimit = max;
 }
 
-Apothecary::Apothecary(int aShelfLimit, int aOrderLimit)
+Apothecary::Apothecary(int aOrderLimit, int aShelfLimit)
 {
     OnShelf.InitStack(aShelfLimit);
     ShelfLimit = aShelfLimit;
@@ -46,8 +46,8 @@ Apothecary::Apothecary(int aShelfLimit, int aOrderLimit)
     OrderLimit = aOrderLimit;
 }
 
-/* Takes the potion type argument and adds a potion of that type to the end */
-/* of the queue. */
+/* Takes the potion type argument and adds a potion of that type to the end
+   of the queue. */
 bool Apothecary::OrderPotion(PotionType newPotionType)
 {
     Potion *newPotion;
@@ -65,24 +65,29 @@ bool Apothecary::OrderPotion(PotionType newPotionType)
 /* Takes the queue of orders and turns them into on the shelf potions. */
 int Apothecary::MakePotions()
 {
-    int maxCanMake = OnShelf.GetRemainingSpace();
-    int i;
-    for (i = 0; i < maxCanMake; i++) {
-        if (!InQueue.isEmptyQueue()) {
-            Potion *freshPotion = InQueue.RemPotion();
-            OnShelf.push(freshPotion);
-            cout << "Made a " << freshPotion->GetType() << " potion" << endl;
-        } else {
+    int potionsMade = 0;
+    while (1) {
+        if (InQueue.isEmptyQueue()) {
             break;
+        } else if (OnShelf.isFullStack()) {
+                cout << "The shelf of potions is full.  You can't make any more until somebody buys some." << endl;
+                break;
+        } else {
+            Potion *freshPotion;
+            freshPotion = new Potion;
+            freshPotion->SetType(InQueue.RemPotion());
+            OnShelf.push(freshPotion);
+            cout << "Made a " << PotionTypeString(freshPotion->GetType()) << " potion" << endl;
+            potionsMade++;
         }
-    } 
-    return i;
+    }
+    return potionsMade;
 }
 
 /* Pops one potion off the stack */
 bool Apothecary::BuyPotion(Potion &potion)
 {
-    if(OnShelf.pop())
+    if(OnShelf.pop(potion))
         return true;
     else
         return false;

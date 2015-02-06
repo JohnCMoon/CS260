@@ -9,6 +9,7 @@
  *
  */
 
+#include <cstring>
 #include "main.h"
 
 class Potion {
@@ -54,4 +55,3 @@ std::ostream& operator<<(std::ostream& osObject, const Potion &potionAddr)
     osObject << "Potion of " << PotionTypeString(potionAddr.type) << std::endl;
     return osObject;
 }
-

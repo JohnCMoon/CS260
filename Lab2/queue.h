@@ -1,15 +1,23 @@
+/*
+ * File: queue.h
+ *
+ * Author: John Moon <john.moon1@pcc.edu>
+ *
+ * Purpose: Implements the queue ADT.
+ *
+ */
+
 class queue {
 public:
     void InitQueue(int max);
     bool isEmptyQueue();
     bool isFullQueue();
-    Potion *GetFront();
-    Potion *GetBack();
     bool AddPotion(Potion *newPotion);
-    Potion *RemPotion();
+    PotionType RemPotion();
     int GetCount();
+    ~queue();
 private:
-    int MaxQueue;
+    int maxQueue;
     Potion *front;
     Potion *back;
 };
@@ -17,11 +25,25 @@ private:
 
 void queue::InitQueue(int max)
 {
-    MaxQueue = max;
+    maxQueue = max;
     front = new Potion;
     front->next = nullptr;
     front->prev = nullptr;
     Potion *back(front);
+}
+
+queue::~queue()
+{
+    Potion *tmp(front);
+    while (tmp->next != nullptr) {
+        tmp = tmp->next;
+        delete tmp->prev;
+        tmp->prev = nullptr;
+    }
+    delete tmp;
+    tmp = nullptr;
+    front = nullptr;
+    back = nullptr;
 }
 
 bool queue::isEmptyQueue()
@@ -34,20 +56,10 @@ bool queue::isEmptyQueue()
 
 bool queue::isFullQueue()
 {
-    if (GetCount() == MaxQueue)
+    if (GetCount() == maxQueue)
         return true;
     else
         return false;
-}
-
-Potion *queue::GetFront()
-{
-    return front;
-}
-
-Potion *queue::GetBack()
-{
-    return back;
 }
 
 bool queue::AddPotion(Potion *newPotion)
@@ -68,17 +80,18 @@ bool queue::AddPotion(Potion *newPotion)
     }
 }
 
-Potion *queue::RemPotion()
+PotionType queue::RemPotion()
 {
-    Potion *tmp(front);
+    PotionType type = front->GetType();
     if (front->next == nullptr) {
         PotionType nullType = UNKNOWN;
         front->SetType(nullType);
     } else {
         front = front->next;
+        delete front->prev;
         front->prev = nullptr;
     }
-    return tmp;
+    return type;
 }
 
 int queue::GetCount()
