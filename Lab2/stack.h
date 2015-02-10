@@ -25,17 +25,17 @@ void stack::InitStack(int max)
 {
     maxStack = max;
     top = new Potion;
-    top->next = nullptr;
-    top->prev = nullptr;
+    top->SetNext(nullptr);
+    top->SetPrev(nullptr);
 }
 
 stack::~stack()
 {
     Potion *tmp(top);
-    while (tmp->next != nullptr) {
-        tmp = tmp->next;
-        delete tmp->prev;
-        tmp->prev = nullptr;
+    while (tmp->GetNext() != nullptr) {
+        tmp = tmp->GetNext();
+        delete tmp->GetPrev();
+        tmp->SetPrev(nullptr);
     }
     delete tmp;
     tmp = nullptr;
@@ -61,9 +61,9 @@ bool stack::isFullStack()
 bool stack::push(Potion *newPotion)
 {
     if (!isFullStack()) {
-        top->prev = newPotion;
-        newPotion->next = top;
-        newPotion->prev = nullptr;
+        top->SetPrev(newPotion);
+        newPotion->SetNext(top);
+        newPotion->SetPrev(nullptr);
         top = newPotion;
         return true;
     } else {
@@ -74,14 +74,14 @@ bool stack::push(Potion *newPotion)
 bool stack::pop(Potion &potion)
 {
     if (!isEmptyStack()) {
-        if (top->next == nullptr) {
+        if (top->GetNext() == nullptr) {
             PotionType nullType = UNKNOWN;
             top->SetType(nullType);
         } else {
-            top = top->next;
-            potion = *top->prev;
-            delete top->prev;
-            top->prev = nullptr;
+            top = top->GetNext();
+            potion = *top->GetPrev();
+            delete top->GetPrev();
+            top->SetPrev(nullptr);
         }
         return true;
     } else {
@@ -93,9 +93,9 @@ int stack::GetCount()
 {
     int count = 0;
     Potion *tmp(top);
-    while (tmp->next != nullptr) {
+    while (tmp->GetNext() != nullptr) {
         count++;
-        tmp = tmp->next;
+        tmp = tmp->GetNext();
     }
     if (tmp->GetType() != UNKNOWN)
         count++;

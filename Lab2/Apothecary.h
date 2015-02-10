@@ -19,6 +19,7 @@ class Apothecary {
 public:
     bool OrderPotion(PotionType potion);
     int MakePotions();
+    void RecursiveMake(int *potionsMade);
     bool BuyPotion(Potion &potion);
     Apothecary();
     Apothecary(int aShelfLimit, int aOrderLimit);
@@ -65,24 +66,31 @@ bool Apothecary::OrderPotion(PotionType newPotionType)
 /* Takes the queue of orders and turns them into on the shelf potions. */
 int Apothecary::MakePotions()
 {
-    int potionsMade = 0;
-    while (1) {
-        if (InQueue.isEmptyQueue()) {
-            break;
-        } else if (OnShelf.isFullStack()) {
-                cout << "The shelf of potions is full.  You can't make any more until somebody buys some." << endl;
-                break;
-        } else {
-            Potion *freshPotion;
-            freshPotion = new Potion;
-            freshPotion->SetType(InQueue.RemPotion());
-            OnShelf.push(freshPotion);
-            cout << "Made a " << PotionTypeString(freshPotion->GetType()) << " potion." << endl;
-            potionsMade++;
-        }
-    }
+    int *tmpPtr;
+    tmpPtr = new int;
+    *tmpPtr = 0;
+    RecursiveMake(tmpPtr);
+    int potionsMade = *tmpPtr;
+    delete tmpPtr;
+    tmpPtr = nullptr;
     return potionsMade;
 }
+
+void Apothecary::RecursiveMake(int *potionsMade)
+{
+    if (!InQueue.isEmptyQueue() && !OnShelf.isFullStack()) {
+        Potion *freshPotion;
+        freshPotion = new Potion;
+        freshPotion->SetType(InQueue.RemPotion());
+        OnShelf.push(freshPotion);
+        cout << "Made a " << PotionTypeString(freshPotion->GetType()) << " potion." << endl;    
+        (*potionsMade)++;
+        RecursiveMake(potionsMade);
+    } else {
+        if (OnShelf.isFullStack())
+            cout << "The shelf of potions is full.  You can't make any more until somebody buys some." << endl;
+    }
+} 
 
 /* Pops one potion off the stack */
 bool Apothecary::BuyPotion(Potion &potion)

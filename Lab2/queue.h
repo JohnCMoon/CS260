@@ -15,6 +15,7 @@ public:
     bool AddPotion(Potion *newPotion);
     PotionType RemPotion();
     int GetCount();
+    queue(const queue &newQueue);
     ~queue();
 private:
     int maxQueue;
@@ -27,18 +28,27 @@ void queue::InitQueue(int max)
 {
     maxQueue = max;
     front = new Potion;
-    front->next = nullptr;
-    front->prev = nullptr;
+    front->SetNext(nullptr);
+    front->SetPrev(nullptr);
     Potion *back(front);
+}
+
+queue::queue(const queue &newQueue)
+{
+    maxQueue = newQueue.maxQueue;
+    front = new Potion;
+    *front = *newQueue.front;
+    back = new Potion;
+    *back = *newQueue.back;
 }
 
 queue::~queue()
 {
     Potion *tmp(front);
-    while (tmp->next != nullptr) {
-        tmp = tmp->next;
-        delete tmp->prev;
-        tmp->prev = nullptr;
+    while (tmp->GetNext() != nullptr) {
+        tmp = tmp->GetNext();
+        delete tmp->GetPrev();
+        tmp->SetPrev(nullptr);
     }
     delete tmp;
     tmp = nullptr;
@@ -67,15 +77,15 @@ bool queue::AddPotion(Potion *newPotion)
     if (!isFullQueue()) {
         if (isEmptyQueue()) {
             front->SetType(newPotion->GetType());
-            front->next = newPotion->next;
-            front->prev = newPotion->prev;
+            front->SetNext(newPotion->GetNext());
+            front->SetPrev(newPotion->GetPrev());
             back = front;
             delete newPotion;
             newPotion = nullptr;
         } else {
-            back->next = newPotion;
-            newPotion->prev = back;
-            newPotion->next = nullptr;
+            back->SetNext(newPotion);
+            newPotion->SetPrev(back);
+            newPotion->SetNext(nullptr);
             back = newPotion;
         }
         return true;
@@ -87,13 +97,13 @@ bool queue::AddPotion(Potion *newPotion)
 PotionType queue::RemPotion()
 {
     PotionType type = front->GetType();
-    if (front->next == nullptr) {
+    if (front->GetNext() == nullptr) {
         delete front;
         InitQueue(maxQueue); // Removing last one in queue, so reinitialize
     } else {
-        front = front->next;
-        delete front->prev;
-        front->prev = nullptr;
+        front = front->GetNext();
+        delete front->GetPrev();
+        front->SetPrev(nullptr);
     }
     return type;
 }
@@ -102,9 +112,9 @@ int queue::GetCount()
 {
     int count = 0;
     Potion *tmp(front);
-    while (tmp->next != nullptr) {
+    while (tmp->GetNext() != nullptr) {
         count++;
-        tmp = tmp->next;
+        tmp = tmp->GetNext();
     }
     if (tmp->GetType() != UNKNOWN) {
         count++;

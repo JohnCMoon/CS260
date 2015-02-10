@@ -5,7 +5,7 @@
  *  Author: John Moon <john.moon1@pcc.edu>
  *
  *  Purpose: Implements the potion class includes data members for the potion
- *           and accessor methods
+ *           and accessor methods. This acts as the linked list class.
  *
  */
 
@@ -18,10 +18,14 @@ public:
     Potion();
     Potion(PotionType aType);
     void SetType(PotionType aType);
-    Potion *next;
-    Potion *prev;
+    Potion *GetNext();
+    Potion *GetPrev();
+    void SetNext(Potion *aNext);
+    void SetPrev(Potion *aPrev);
     friend std::ostream& operator<<(std::ostream& osObject, const Potion &potionAddr);
 private:
+    Potion *next;
+    Potion *prev;
     PotionType type;
 };
 
@@ -49,6 +53,26 @@ void Potion::SetType(PotionType aType)
 {
     type = aType;
 }  
+
+Potion *Potion::GetNext()
+{
+    return next;
+}
+
+Potion *Potion::GetPrev()
+{
+    return prev;
+}
+
+void Potion::SetNext(Potion *aNext)
+{
+    next = aNext;
+}
+
+void Potion::SetPrev(Potion *aPrev)
+{
+    prev = aPrev;
+}
 
 std::ostream& operator<<(std::ostream& osObject, const Potion &potionAddr)
 {
