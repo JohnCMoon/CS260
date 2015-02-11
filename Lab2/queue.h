@@ -9,13 +9,15 @@
 
 class queue {
 public:
-    void InitQueue(int max);
     bool isEmptyQueue();
     bool isFullQueue();
     bool AddPotion(Potion *newPotion);
     PotionType RemPotion();
     int GetCount();
+    void SetLimit(int limit);
+    queue();
     queue(const queue &newQueue);
+    queue &operator = (const queue &newQueue);
     ~queue();
 private:
     int maxQueue;
@@ -23,13 +25,9 @@ private:
     Potion *back;
 };
 
-
-void queue::InitQueue(int max)
+queue::queue()
 {
-    maxQueue = max;
     front = new Potion;
-    front->SetNext(nullptr);
-    front->SetPrev(nullptr);
     Potion *back(front);
 }
 
@@ -40,6 +38,16 @@ queue::queue(const queue &newQueue)
     *front = *newQueue.front;
     back = new Potion;
     *back = *newQueue.back;
+}
+
+queue &queue::operator = (const queue &otherQueue)
+{
+    maxQueue = otherQueue.maxQueue;
+    front = new Potion;
+    *front = *otherQueue.front;
+    back = new Potion;
+    *back = *otherQueue.back;
+    return *this;
 }
 
 queue::~queue()
@@ -77,8 +85,8 @@ bool queue::AddPotion(Potion *newPotion)
     if (!isFullQueue()) {
         if (isEmptyQueue()) {
             front->SetType(newPotion->GetType());
-            front->SetNext(newPotion->GetNext());
-            front->SetPrev(newPotion->GetPrev());
+            front->SetNext(nullptr);
+            front->SetPrev(nullptr);
             back = front;
             delete newPotion;
             newPotion = nullptr;
@@ -98,14 +106,20 @@ PotionType queue::RemPotion()
 {
     PotionType type = front->GetType();
     if (front->GetNext() == nullptr) {
-        delete front;
-        InitQueue(maxQueue); // Removing last one in queue, so reinitialize
+        delete front; // Removing last one in queue, so delete and realloc
+        front = new Potion;
+        back = front;
     } else {
         front = front->GetNext();
         delete front->GetPrev();
         front->SetPrev(nullptr);
     }
     return type;
+}
+
+void queue::SetLimit(int limit)
+{
+    maxQueue = limit;
 }
 
 int queue::GetCount()

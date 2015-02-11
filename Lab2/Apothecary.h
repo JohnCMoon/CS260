@@ -22,29 +22,16 @@ public:
     void RecursiveMake(int *potionsMade);
     bool BuyPotion(Potion &potion);
     Apothecary();
-    Apothecary(int aShelfLimit, int aOrderLimit);
+    Apothecary(int ShelfLimit, int OrderLimit);
 private:
     stack OnShelf;
-    int ShelfLimit;
     queue InQueue;
-    int OrderLimit;
 };
 
-Apothecary::Apothecary()
+Apothecary::Apothecary(int OrderLimit, int ShelfLimit)
 {
-    int max = 10; // Just choosing a max
-    OnShelf.InitStack(max);
-    ShelfLimit = max;   
-    InQueue.InitQueue(max);
-    OrderLimit = max;
-}
-
-Apothecary::Apothecary(int aOrderLimit, int aShelfLimit)
-{
-    OnShelf.InitStack(aShelfLimit);
-    ShelfLimit = aShelfLimit;
-    InQueue.InitQueue(aOrderLimit);
-    OrderLimit = aOrderLimit;
+    OnShelf.SetLimit(ShelfLimit);
+    InQueue.SetLimit(OrderLimit);
 }
 
 /* Takes the potion type argument and adds a potion of that type to the end

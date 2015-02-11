@@ -1,4 +1,5 @@
 /*
+ *
  * File: stack.h
  *
  * Author: John Moon <john.moon1@pcc.edu>
@@ -9,24 +10,39 @@
 
 class stack {
 public:
-    void InitStack(int max);
     bool isEmptyStack();
     bool isFullStack();
     bool push(Potion *newPotion);
     bool pop(Potion &potion);
+    void SetLimit(int limit);
     int GetCount();
+    stack();
+    stack(const stack &newStack);
+    stack &operator = (const stack &newStack);
     ~stack();
 private:
     int maxStack;
     Potion *top;
 };
 
-void stack::InitStack(int max)
+stack::stack()
 {
-    maxStack = max;
     top = new Potion;
-    top->SetNext(nullptr);
-    top->SetPrev(nullptr);
+}
+    
+stack::stack(const stack &newStack)
+{
+    maxStack = newStack.maxStack;
+    top = new Potion;
+    *top = *newStack.top;
+}
+
+stack &stack::operator = (const stack &otherStack)
+{
+    maxStack = otherStack.maxStack;
+    top = new Potion;
+    *top = *otherStack.top;
+    return *this;
 }
 
 stack::~stack()
@@ -87,6 +103,11 @@ bool stack::pop(Potion &potion)
     } else {
         return false;
     }
+}
+
+void stack::SetLimit(int limit)
+{
+    maxStack = limit;
 }
 
 int stack::GetCount()
