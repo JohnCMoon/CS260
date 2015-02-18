@@ -16,7 +16,7 @@ void Test()
 	Player* outPlayer = NULL;
 
 	// Test 1: Make sure that an empty player database doesn't fail
-	PlayerDB pdb(cout);
+    PlayerDB pdb/*(cout)*/;
 	pdb.PrintDiagnostics();
 
 	// Test 2: Try to fetch a non-user
