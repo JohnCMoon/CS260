@@ -22,13 +22,14 @@ public:
 private:
     node *next;
     node *prev;
-    Player playerData;
+    Player *playerData;
 };
 
 node::node()
 {
     next = nullptr;
     prev = nullptr;
+    playerData = new Player;
 } 
 
 node *node::GetNext()
@@ -53,10 +54,10 @@ void node::SetPrev(node *newPrev)
 
 Player *node::GetPlayer()
 {
-    return &playerData;
+    return playerData;
 }
 
 void node::SetPlayer(Player newPlayer)
 {
-    playerData = newPlayer;
+    *playerData = newPlayer;
 }   

@@ -79,7 +79,8 @@ Player *HashTable::GetPlayer(char *key, node **match)
  
 bool HashTable::FindNode(char *key, node *traverse, node **match)
 {
-    if (strcmp(traverse->GetPlayer()->GetName(), key) == 0) {
+    char *testName = traverse->GetPlayer()->GetName();
+    if (testName != nullptr && strcmp(testName, key) == 0) {
         *match = traverse;
         return true;
     } else {
