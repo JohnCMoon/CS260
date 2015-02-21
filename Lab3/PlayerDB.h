@@ -21,8 +21,20 @@ private:
     HashTable table;
 }; 
 
+using namespace std;
+
 void PlayerDB::PrintDiagnostics()
 {
+    cout << "===================" << endl;
+    cout << "Hash Table Diagnostics" << endl << endl;
+    cout << "Table Size: " << GetTableSize() << endl;
+    cout << "Number of Entries: " << GetEntryCount() << endl;
+    int i;
+    for (i = 0; i < GetTableSize(); i++) {
+        cout << "Slot[" << i << "]:" << endl;
+        table.PrintList(i);
+    }
+    cout << "===================" << endl;
 }
 
 Player *PlayerDB::FetchPlayer(char *key)
@@ -34,8 +46,14 @@ Player *PlayerDB::FetchPlayer(char *key)
 
 bool PlayerDB::AddPlayer(Player newPlayer)
 {
-    table.Insert(newPlayer);
-    return true;
+    cout << "Attempting to add player \"" << newPlayer.GetName() << "\" to the database -- ";
+    if (table.Insert(newPlayer)) {
+        cout << "Success!" << endl;
+        return true;
+    } else {
+        cout << "Failed." << endl;
+        return false;
+    }
 }
 
 bool PlayerDB::RemovePlayer(char *key)
@@ -44,4 +62,20 @@ bool PlayerDB::RemovePlayer(char *key)
         return false;
     else
         return true;
+}
+
+int PlayerDB::GetTableSize()
+{
+   return table.GetTableSize();
+} 
+
+int PlayerDB::GetEntryCount()
+{
+    int sum = 0;
+    int i;
+    for (i = 0; i < GetTableSize(); i++) {
+        sum = sum + table.GetListSize(i);
+        cout << "So the list size in " << i << " is " << table.GetListSize(i) << endl;
+    }
+    return sum;
 }

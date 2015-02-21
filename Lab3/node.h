@@ -29,7 +29,7 @@ node::node()
 {
     next = nullptr;
     prev = nullptr;
-    playerData = new Player;
+    playerData = nullptr;
 } 
 
 node *node::GetNext()
@@ -59,5 +59,6 @@ Player *node::GetPlayer()
 
 void node::SetPlayer(Player newPlayer)
 {
+    playerData = new Player;
     *playerData = newPlayer;
 }   

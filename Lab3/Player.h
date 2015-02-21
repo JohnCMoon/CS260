@@ -42,8 +42,6 @@ Player::Player(char *newName, Gender newGender)
     int nameLength = strlen(newName);
     name = new char [nameLength + 1];
     strcpy(name, newName);
-    delete newName;
-    newName = nullptr;
     gend = newGender;
 }
 
