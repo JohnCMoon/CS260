@@ -24,6 +24,7 @@ public:
     int GetLevel();
     void SetGender(Gender newGender);
     Gender GetGender();
+    void DeallocName();
 private:
     char *name;
     Gender gend;
@@ -34,7 +35,7 @@ Player::Player()
 {
     name = nullptr;
     gend = UNKNOWN;
-    level = NULL;
+    level = 0;
 }
 
 Player::Player(char *newName, Gender newGender)
@@ -43,6 +44,7 @@ Player::Player(char *newName, Gender newGender)
     name = new char [nameLength + 1];
     strcpy(name, newName);
     gend = newGender;
+    level = 0;
 }
 
 void Player::LevelUp()
@@ -82,4 +84,9 @@ void Player::SetGender(Gender newGender)
 Gender Player::GetGender()
 {
     return gend;
+}
+    
+void Player::DeallocName()
+{
+    delete [] name;
 }

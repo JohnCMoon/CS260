@@ -39,8 +39,16 @@ void PlayerDB::PrintDiagnostics()
 
 Player *PlayerDB::FetchPlayer(char *key)
 {
-    node **match;
-    Player *foundPlayer = table.GetPlayer(key, match);
+    cout << "Fetching player \"" << key << "\" -- ";
+    node *playerNode = table.GetPlayerNode(key);
+    Player *foundPlayer;
+    if (playerNode != nullptr) {
+        foundPlayer = playerNode->GetPlayer();
+        cout << "Success!" << endl;
+    } else {
+        foundPlayer = nullptr;
+        cout << "Failed." << endl;
+    }
     return foundPlayer;
 }
 
@@ -58,10 +66,14 @@ bool PlayerDB::AddPlayer(Player newPlayer)
 
 bool PlayerDB::RemovePlayer(char *key)
 {
-    if (table.Remove(key))
-        return false;
-    else
+    cout << "Removing player \"" << key << "\" from the databse -- ";
+    if (table.Remove(key)) {
+        cout << "Success!" << endl;
         return true;
+    } else {
+        cout << "Failed." << endl;
+        return false;
+    }
 }
 
 int PlayerDB::GetTableSize()
@@ -75,7 +87,6 @@ int PlayerDB::GetEntryCount()
     int i;
     for (i = 0; i < GetTableSize(); i++) {
         sum = sum + table.GetListSize(i);
-        cout << "So the list size in " << i << " is " << table.GetListSize(i) << endl;
     }
     return sum;
 }

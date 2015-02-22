@@ -18,7 +18,7 @@ public:
     ~HashTable();
     bool Insert(Player newPlayer);
     bool Remove(char *key);
-    Player *GetPlayer(char *key, node **match);
+    node *GetPlayerNode(char *key);
     int GetTableSize();
     int GetListSize(int index);
     void PrintList(int index);
@@ -28,60 +28,89 @@ public:
     friend std::ostream &operator<<(std::ostream &out, HashTable &aTable);
 private:
     int tableSize;
-    node *indices;
+    node **indices;
 };
 
 HashTable::HashTable()
 {
     tableSize = 3;
-    indices = new node[tableSize];
+    indices = new node*[tableSize];
+    int i;
+    for (i = 0; i < tableSize; i++)
+        indices[i] = new node;
 }
 
 HashTable::~HashTable()
-{
-    delete [] indices;
+{    
+    int i;
+    for (i = 0; i < tableSize; i++) {
+        node *traverse(indices[i]);
+        while (traverse->GetNext() != nullptr) {
+            traverse = traverse->GetNext();
+            traverse->GetPrev()->GetPlayer()->DeallocName();
+            delete traverse->GetPrev();
+        }
+        traverse->GetPlayer()->DeallocName();
+        delete traverse;
+    }
 }
 
 bool HashTable::Insert(Player newPlayer)
 {
+    using namespace std;
     int index = Hash(newPlayer.GetName());
-    node *traverse(&indices[index]);
-    node **match; // Don't really need this, just want to use FindNode().
-    if (FindNode(newPlayer.GetName(), traverse, match)) {
+    node *traverse(indices[index]);
+    node *match;
+    node **matchPtr = &match; // Don't really need this, just want to use FindNode().
+    if (FindNode(newPlayer.GetName(), traverse, matchPtr)) {
         return false;
     } else {
-        node *newNode;
-        newNode = new node;
-        newNode->SetPlayer(newPlayer);
-        while (traverse->GetNext() != nullptr)
-            traverse = traverse->GetNext();
-        if (traverse->GetPlayer() == nullptr)
-            traverse = newNode;
-        else
+        if (traverse->GetPlayer() == nullptr) {
+            traverse->SetPlayer(newPlayer);
+        } else { 
+            node *newNode;
+            newNode = new node;
+            newNode->SetPlayer(newPlayer);
+            while (traverse->GetNext() != nullptr)
+                traverse = traverse->GetNext();
             traverse->SetNext(newNode);
+            newNode->SetPrev(traverse);
+        }
         return true;
     }
 }
 
 bool HashTable::Remove(char *key)
 {
-    node **match;
-    if (FindNode(key, &indices[Hash(key)], match)) {
-        (*match)->GetPrev()->SetNext((*match)->GetNext());  
-        (*match)->GetNext()->SetPrev((*match)->GetPrev());
-        delete *match;
+    int index = Hash(key);
+    node *match;
+    node **matchPtr = &match;
+    if (FindNode(key, indices[index], matchPtr)) {
+        if (match->GetPrev() != nullptr)
+            match->GetPrev()->SetNext(match->GetNext());
+        if (match->GetNext() != nullptr)
+            match->GetNext()->SetPrev(match->GetPrev());
+        if (match == indices[index]) {
+            if (match->GetNext() != nullptr)
+                indices[index] = match->GetNext();
+            else
+                indices[index] = new node;
+        }
+        delete match;
+        matchPtr = nullptr; 
         match = nullptr;
         return true;
     } else {
-        match = nullptr;
         return false;
     }
 }
 
-Player *HashTable::GetPlayer(char *key, node **match)
+node *HashTable::GetPlayerNode(char *key)
 {
-    if (FindNode(key, &indices[Hash(key)], match))
-        return (*match)->GetPlayer();
+    node *match;
+    node **matchPtr = &match; 
+    if (FindNode(key, indices[Hash(key)], matchPtr))
+        return match;
     else
         return nullptr;
 }
@@ -94,7 +123,7 @@ int HashTable::GetTableSize()
 int HashTable::GetListSize(int index)
 {
     int count = 0;
-    node *traverse(&indices[index]);
+    node *traverse(indices[index]);
     while (traverse->GetNext() != nullptr) {
         count++;
         traverse = traverse->GetNext();
@@ -107,7 +136,7 @@ int HashTable::GetListSize(int index)
 void HashTable::PrintList(int index)
 {
     using namespace std;
-    node *traverse(&indices[index]);
+    node *traverse(indices[index]);
     while (traverse->GetNext() != nullptr) {
         cout << "  " << traverse->GetPlayer()->GetName() << " [" << traverse->GetPlayer()->GetLevel() << "]" << endl;
         traverse = traverse->GetNext();
@@ -118,17 +147,17 @@ void HashTable::PrintList(int index)
         cout << "  EMPTY" << endl;
 }
 
-bool HashTable::FindNode(char *key, node *traverse, node **match)
+bool HashTable::FindNode(char *key, node *traverse, node **matchPtr)
 {
     if (traverse->GetPlayer() != nullptr) { 
         char *testName = traverse->GetPlayer()->GetName();
         if (testName != nullptr && strcmp(testName, key) == 0) {
-            *match = traverse;
+            *matchPtr = traverse;
             return true;
         } else {
             if (traverse->GetNext() != nullptr) {
                 traverse = traverse->GetNext();
-                FindNode(key, traverse, match);
+                FindNode(key, traverse, matchPtr);
             }
         }
     } else {
@@ -139,12 +168,12 @@ bool HashTable::FindNode(char *key, node *traverse, node **match)
 
 int HashTable::Hash(char *key)
 {
-    int index = 0;
+    unsigned long sum = 0;
     int i = 0;
     while (key[i] != '\0' ) {    
-        index = (index * 32) + key[i];
+        sum = (sum * 32) + key[i];
         i++;
     }
-    index = index % tableSize;
+    int index = sum % tableSize;
     return index;
 }
