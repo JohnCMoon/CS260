@@ -9,6 +9,8 @@
  *
  */
 
+#include <cmath>
+#include <cctype>
 #include "node.h"
 
 class HashTable {
@@ -50,14 +52,14 @@ HashTable::~HashTable()
             traverse->GetPrev()->GetPlayer()->DeallocName();
             delete traverse->GetPrev();
         }
-        traverse->GetPlayer()->DeallocName();
+        if (traverse->GetPlayer() != nullptr)
+            traverse->GetPlayer()->DeallocName();
         delete traverse;
-    }
+    } 
 }
 
 bool HashTable::Insert(Player newPlayer)
 {
-    using namespace std;
     int index = Hash(newPlayer.GetName());
     node *traverse(indices[index]);
     node *match;
@@ -71,10 +73,9 @@ bool HashTable::Insert(Player newPlayer)
             node *newNode;
             newNode = new node;
             newNode->SetPlayer(newPlayer);
-            while (traverse->GetNext() != nullptr)
-                traverse = traverse->GetNext();
-            traverse->SetNext(newNode);
-            newNode->SetPrev(traverse);
+            traverse->SetPrev(newNode);
+            newNode->SetNext(traverse);
+            indices[index] = newNode;
         }
         return true;
     }
@@ -168,9 +169,9 @@ bool HashTable::FindNode(char *key, node *traverse, node **matchPtr)
 
 int HashTable::Hash(char *key)
 {
-    unsigned long sum = 0;
+    unsigned int sum = 0; // This overflows, but matches expected text.
     int i = 0;
-    while (key[i] != '\0' ) {    
+    while (key[i] != '\0') {
         sum = (sum * 32) + key[i];
         i++;
     }
