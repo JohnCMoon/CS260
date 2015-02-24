@@ -50,12 +50,16 @@ HashTable::~HashTable()
         while (traverse->GetNext() != nullptr) {
             traverse = traverse->GetNext();
             traverse->GetPrev()->GetPlayer()->DeallocName();
+            delete traverse->GetPrev()->GetPlayer();
             delete traverse->GetPrev();
         }
-        if (traverse->GetPlayer() != nullptr)
+        if (traverse->GetPlayer() != nullptr) {
             traverse->GetPlayer()->DeallocName();
+            delete traverse->GetPlayer();
+        }
         delete traverse;
-    } 
+    }
+    delete [] indices;
 }
 
 bool HashTable::Insert(Player newPlayer)
@@ -65,6 +69,7 @@ bool HashTable::Insert(Player newPlayer)
     node *match;
     node **matchPtr = &match; // Don't really need this, just want to use FindNode().
     if (FindNode(newPlayer.GetName(), traverse, matchPtr)) {
+        newPlayer.DeallocName();
         return false;
     } else {
         if (traverse->GetPlayer() == nullptr) {
@@ -97,6 +102,8 @@ bool HashTable::Remove(char *key)
             else
                 indices[index] = new node;
         }
+        match->GetPlayer()->DeallocName();
+        delete match->GetPlayer();
         delete match;
         matchPtr = nullptr; 
         match = nullptr;

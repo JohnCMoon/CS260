@@ -88,5 +88,8 @@ Gender Player::GetGender()
     
 void Player::DeallocName()
 {
-    delete [] name;
+    if (name != nullptr) {
+        delete [] name;
+        name = nullptr;
+    }
 }
