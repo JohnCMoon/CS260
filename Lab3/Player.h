@@ -85,7 +85,8 @@ Gender Player::GetGender()
 {
     return gend;
 }
-    
+
+/* Deallocates the memory allocated to "name". */ 
 void Player::DeallocName()
 {
     if (name != nullptr) {

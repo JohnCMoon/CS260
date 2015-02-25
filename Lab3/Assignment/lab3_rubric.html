@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot;
+
+
+
+
+
+
+
+<div class="syllabus">
+
+  <h1>Lab01 Grading Rubric</h1>
+
+  <h2>Functional Grading Components</h2>
+
+  <p>
+    The following table lists the grade components for the functional requirement.  The first two items (fails to compile, crashes) will override all other components.
+  </p>
+
+  <table class="calendar" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>Component</td>
+      <td>Description</td>
+      <td>Points</td>
+    </tr>
+    <tr>
+      <td>Fails to compile</td>
+      <td>The program fails to compile. In this case it is difficult to evaluate the functionality so no other functional components are considered.</td>
+      <td>-75</td>
+    </tr>
+    <tr>
+      <td>Program crashes or hangs</td>
+      <td>The program crashes or gets into an infinite loop.  In this case it is difficult to evaluate the functionality so no other functional components are considered.</td>
+      <td>-50</td>
+    </tr>
+    <tr>
+      <td>Compiles with warnings</td>
+      <td>The program compiles with warnings but it runs without crashing or hanging.</td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Major memory leaks</td>
+      <td>More than one memory leak. Usually due to missing or improperly implemented destructor.</td>
+      <td>-10</td>
+    </tr>
+    <tr>
+      <td>Minor memory leak</td>
+      <td>Just one (or two, if related) small memory leaks. Usually due to forgetting to delete a temporarily allocated item.</td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Major output mismatch</td>
+      <td>There are several missing lines of output, they are out of order, or they are plain wrong.</td>
+      <td>-10</td>
+    </tr>
+    <tr>
+      <td>Minor output mismatch</td>
+      <td>Missing one or two lines, pervasive punctuation, spelling or capitalization errors.</td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Trivial output mismatch</td>
+      <td>A single trivial error in punctuation, spelling or capitalization errors.</td>
+      <td>-2</td>
+    </tr>
+    <tr>
+      <td>Missing feature</td>
+      <td>A feature listed in the requirements is not implemented.  This will likely also cause a major output mismatch. This penalty is &quot;per feature&quot;.</td>
+      <td>-5 (per feature)</td>
+    </tr>
+  </table>
+
+  <h2>Design Grading Components</h2>
+
+  <p>
+    The following table lists the grade components for the design
+    requirement.  These are the items I evaluate when detemining the
+    design grade.  This assumes that the program code is mostly
+    complete.  For program code that is incomplete the design score
+    will be reduced in proportion to the amount of missing code.
+  </p>
+
+  <table class="calendar" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>Component</td>
+      <td>Description</td>
+      <td>Points</td>
+    </tr>
+    <tr>
+      <td>Public data members</td>
+      <td>
+	You should not have any public data members in your classes.
+	Use getters/setters to read/write these members.
+      </td>
+      <td>-10</td>
+    </tr>
+    <tr>
+      <td>Poor identifier names</td>
+      <td>
+	Make sure your classes, methods, variables, etc. are named
+	with sensible names.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Poor cohesion/coupling</td>
+      <td>
+	Your program design should make sure that each method or
+	function just does one thing and that each class is well
+	encapsulated.
+      </td>
+      <td>-10</td>
+    </tr>
+    <tr>
+      <td>Repeated code</td>
+      <td>
+	You shouldn&#39;t find yourself repeating the same lines of code
+	over and over again.  If you do then you need to refactor to a
+	helper function/method.  It is common for people to repeat
+	code in the copy constructor and assignment operator.  Try to
+	avoid this.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Overly complex control structure</td>
+      <td>
+	Try to use simple and straight-forward control statements (if, for, while, etc.)
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Too clever code</td>
+      <td>
+	Your code is overly clever which makes it hard to understand
+	and even harder to debug.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Using char[] for strings</td>
+      <td>It is a design flaw to use fixed size character arrays for
+      strings.  This can very easily lead to character buffer
+      overflow problems that you will only discover at runtime with
+      specific data.</td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Missing copy constructor and/or assignment operator</td>
+      <td>
+	Any class that needs a destructor also needs a copy
+	constructor and assignment operator.  The reason is because
+	you (the class author) don&#39;t have control over how the client
+	code will use your class.  Without a copy constructor you are
+	susceptible to problems if the client code making copies of
+	your class and destroying the copy.  The same reasoning
+	applies to the assignment operator.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Break statements</td>
+      <td>
+	While the C++ language allows for break statements in loops,
+	it is better design practice to avoid this.  In nearly all
+	cases a break can be avoided.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Multiple return statements</td>
+      <td>
+	Each method in your classes should have no more than one
+	return statement.  There is a exception to this when there is
+	a simple if/return at the very beginning of the method.  It is
+	not technically illegal to have multiple returns but it is
+	better design to have a single one.
+      </td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>Embedded hash table functionality</td>
+      <td>
+      It is best to have your data structure as a separate class
+      rather than embed it in the application code.  This is a higher
+      level of modularity.  It allows for more code resue, easier
+      debugging, and easier maintenance.
+      </td>
+      <td>-10</td>
+    </tr>
+    <tr>
+      <td>Integer literals</td>
+      <td>
+	It is good programming practice to define all integer literals
+	(except 0) as a constant and then refer to that constant.  The
+	two main reasons for this are that 1) it allows you to easily
+	change the value; 2) it allows someone to understand the
+	program better when they read it.
+      </td>
+      <td>-2</td>
+    </tr>
+  </table>
+
+</div>
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=10.3.0.791-98 "></script><script type="text/javascript">D2LMathML.DesktopInit('/d2l/common/mathjax/2.1/MathJax.js?config=MML_HTMLorMML','/d2l/common/mathjax/2.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML');</script></body></html>

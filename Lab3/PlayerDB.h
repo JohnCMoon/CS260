@@ -11,6 +11,7 @@
 
 class PlayerDB {
 public:
+    PlayerDB(std::ostream &os):out(os) {}
     void PrintDiagnostics();
     Player *FetchPlayer(char *key);
     bool AddPlayer(Player newPlayer);
@@ -19,10 +20,12 @@ public:
     int GetEntryCount();
 private:
     HashTable table;
+    std::ostream &out;
 }; 
 
 using namespace std;
 
+/* Prints some diagnostic information about the hash table. */
 void PlayerDB::PrintDiagnostics()
 {
     cout << "===================" << endl;
@@ -37,6 +40,7 @@ void PlayerDB::PrintDiagnostics()
     cout << "===================" << endl;
 }
 
+/* Returns the location of the player in the table with the name "key". */
 Player *PlayerDB::FetchPlayer(char *key)
 {
     cout << "Fetching player \"" << key << "\" -- ";
@@ -52,6 +56,7 @@ Player *PlayerDB::FetchPlayer(char *key)
     return foundPlayer;
 }
 
+/* Adds player to the table if player does not already exist. */
 bool PlayerDB::AddPlayer(Player newPlayer)
 {
     cout << "Attempting to add player \"" << newPlayer.GetName() << "\" to the database -- ";
@@ -64,6 +69,7 @@ bool PlayerDB::AddPlayer(Player newPlayer)
     }
 }
 
+/* Removes player from the table if player exists. */
 bool PlayerDB::RemovePlayer(char *key)
 {
     cout << "Removing player \"" << key << "\" from the databse -- ";
@@ -81,6 +87,7 @@ int PlayerDB::GetTableSize()
    return table.GetTableSize();
 } 
 
+/* Sums up number of nodes in each individual indexed linked list. */
 int PlayerDB::GetEntryCount()
 {
     int sum = 0;
