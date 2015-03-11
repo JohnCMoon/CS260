@@ -195,8 +195,8 @@ node *HashTable::GetPlayerNode(char *key)
 {
     node *match;
     node **matchPtr = &match; 
-    if (!FindNode(key, indices[Hash(key)], matchPtr))
-        match == nullptr;
+    match == nullptr;
+    FindNode(key, indices[Hash(key)], matchPtr);
     return match;
 }
 
