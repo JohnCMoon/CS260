@@ -17,8 +17,8 @@ public:
     SkillTree();
     SkillTree(char *aName);
     ~SkillTree();
-    void AddSkill(char *name, char *desc, int level);
-    bool AddSkill(char *name, char *desc, int level, char *parentName);
+    void AddSkill(char *skillName, char *desc, int level);
+    bool AddSkill(char *skillName, char *desc, int level, char *parentName);
     Skill *FindSkill(char *name);
     Skill *FindR(char *name, Skill *root);
     void Display(std::ostream &obj); 
@@ -48,38 +48,27 @@ SkillTree::~SkillTree()
 
 /* Adds a new root to the tree. If there was already a root, it becomes a child
    of this new root. */
-void SkillTree::AddSkill(char *name, char *desc, int level)
+void SkillTree::AddSkill(char *skillName, char *desc, int level)
 {
     if (root->GetName() == nullptr) {
-        std::cout << "About to set the name." << std::endl;
-        root->SetName(name);
-        std::cout << "About to set the desc." << std::endl;
+        root->SetName(skillName);
         root->SetDesc(desc);
         root->SetLevel(level);
     } else {
-        Skill *newRoot;
-        newRoot = new Skill;
-        newRoot->SetName(name);
-        newRoot->SetDesc(desc);
-        newRoot->SetLevel(level);
+        Skill *newRoot = new Skill(skillName, desc, level, nullptr);
         root->SetParent(newRoot);
         newRoot->SetChild(0, root);
         root = newRoot;
     }
 }
 
-bool SkillTree::AddSkill(char *name, char *desc, int level, char *parentName)
+bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentName)
 {
     Skill *parent = FindSkill(parentName);
     if (parent != nullptr) {
         if (parent->ChildIsOpen()) {
-            Skill *newSkill = new Skill;
-            newSkill->SetName(name);
-            newSkill->SetDesc(desc);
-            newSkill->SetLevel(level);
-            newSkill->SetParent(parent);
-            int i;
-            for (i = 0; i < parent->GetMax(); i++) {
+            Skill *newSkill = new Skill(skillName, desc, level, parent);
+            for (int i = 0; i < parent->GetMax(); i++) {
                 if (parent->GetChild(i) == nullptr)
                     parent->SetChild(i, newSkill);
             }
@@ -100,8 +89,7 @@ Skill *SkillTree::FindR(char *name, Skill *root)
     if (strcmp(root->GetName(), name) == 0) {
         return root;
     } else {
-        int i;
-        for (i = 0; i < root->GetMax(); i++) {
+        for (int i = 0; i < root->GetMax(); i++) {
             if (root->GetChild(i) != nullptr)
                 FindR(name, root->GetChild(i));
         }
@@ -122,8 +110,7 @@ void SkillTree::Display(std::ostream &obj)
 void SkillTree::DisplayR(std::ostream &obj, Skill *root)
 {
     root->Display(obj);
-    int i;
-    for (i = 0; i < root->GetMax(); i++) {
+    for (int i = 0; i < root->GetMax(); i++) {
         if (root->GetChild(i) != nullptr)
             DisplayR(obj, root->GetChild(i));
     }

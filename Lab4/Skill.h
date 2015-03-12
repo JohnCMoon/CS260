@@ -9,9 +9,12 @@
  *
  */
 
+#define MAX_CHILDREN 3
+
 class Skill {
 public:
     Skill();
+    Skill(char *aName, char *aDesc, int aLevel, Skill *aParent);
     ~Skill();
     void Display(std::ostream &obj);
     int GetHeight();
@@ -40,10 +43,28 @@ Skill::Skill()
     desc = nullptr;
     level = 0;
     parent = nullptr;
-    maxChildren = 3;
+    maxChildren = MAX_CHILDREN;
     children = new Skill*[maxChildren];
-    int i;
-    for (i = 0; i < maxChildren; i++);
+    for (int i = 0; i < maxChildren; i++)
+        children[i] = nullptr;
+}
+
+Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
+{
+    maxChildren = MAX_CHILDREN;
+    parent = nullptr;    
+
+    int nameLen = strlen(aName);
+    name = new char[nameLen + 1];
+    strcpy(name, aName);
+
+    int descLen = strlen(aDesc);
+    desc = new char[descLen + 1];
+    strcpy(desc, aDesc);
+
+    level = aLevel;
+
+    for (int i = 0; i < maxChildren; i++)
         children[i] = nullptr;
 }
 
@@ -54,8 +75,7 @@ Skill::~Skill()
 void Skill::Display(std::ostream &obj)
 {
     std::cout << "Displaying skill: " << name << std::endl;
-    int i;
-    for (i = 0; i <= GetHeight(); i++)
+    for (int i = 0; i <= GetHeight(); i++)
         obj << "  ";
     obj << "- " << name;
     obj << " -- " << desc;
@@ -81,8 +101,7 @@ int Skill::GetMax()
 
 bool Skill::ChildIsOpen()
 {
-    int i;
-    for (i = 0; i < maxChildren; i++) {
+    for (int i = 0; i < maxChildren; i++) {
         if (children[i] == nullptr)
             return true;
     }
@@ -91,11 +110,9 @@ bool Skill::ChildIsOpen()
 
 void Skill::SetName(char *aName)
 {
-    std::cout << "Beginning to set name" << std::endl;
     int length = strlen(aName);
-    std::cout << "Length of " << aName << " is " << length << std::endl;
+    std::cout << "Length: " << length << std::endl;
     name = new char[length + 1];
-    std::cout << "Mem allocated to name\n";
     strcpy(name, aName);
 }
 
