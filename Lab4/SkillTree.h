@@ -20,7 +20,7 @@ public:
     void AddSkill(char *skillName, char *desc, int level);
     bool AddSkill(char *skillName, char *desc, int level, char *parentName);
     Skill *FindSkill(char *name);
-    Skill *FindR(char *name, Skill *root);
+    void FindR(char *name, Skill *root, Skill **matchPtr);
     void Display(std::ostream &obj); 
     void DisplayR(std::ostream &obj, Skill *root);
 private:
@@ -69,10 +69,11 @@ bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentNam
         if (parent->ChildIsOpen()) {
             Skill *newSkill = new Skill(skillName, desc, level, parent);
             for (int i = 0; i < parent->GetMax(); i++) {
-                if (parent->GetChild(i) == nullptr)
+                if (parent->GetChild(i) == nullptr) {
                     parent->SetChild(i, newSkill);
+                    return true;
+                }
             }
-            return true;
         }
     }
     return false;        
@@ -81,19 +82,24 @@ bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentNam
 
 Skill *SkillTree::FindSkill(char *name)
 {
-    return FindR(name, root);
+    Skill *match = nullptr;
+    Skill **matchPtr = &match;
+    FindR(name, root, matchPtr);
+    return match;
 }
 
-Skill *SkillTree::FindR(char *name, Skill *root)
+void SkillTree::FindR(char *name, Skill *node, Skill **matchPtr)
 {
-    if (strcmp(root->GetName(), name) == 0) {
-        return root;
+    if (strcmp(node->GetName(), name) == 0) {
+        *matchPtr = node;
     } else {
         for (int i = 0; i < root->GetMax(); i++) {
-            if (root->GetChild(i) != nullptr)
-                FindR(name, root->GetChild(i));
+            if (node->GetChild(i) != nullptr) {
+                FindR(name, node->GetChild(i), matchPtr);
+                if (*matchPtr != nullptr)
+                    return;
+            }
         }
-        return nullptr;
     }
 }
 

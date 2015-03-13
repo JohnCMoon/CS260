@@ -1,4 +1,4 @@
-/*
+/* TODO Fix format on last line (bitch), and then fix all mem leaks (definitely a lot).
  *
  * File: Skill.h
  *
@@ -52,7 +52,7 @@ Skill::Skill()
 Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 {
     maxChildren = MAX_CHILDREN;
-    parent = nullptr;    
+    parent = aParent;
 
     int nameLen = strlen(aName);
     name = new char[nameLen + 1];
@@ -64,6 +64,7 @@ Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 
     level = aLevel;
 
+    children = new Skill*[maxChildren];
     for (int i = 0; i < maxChildren; i++)
         children[i] = nullptr;
 }
@@ -74,7 +75,6 @@ Skill::~Skill()
 
 void Skill::Display(std::ostream &obj)
 {
-    std::cout << "Displaying skill: " << name << std::endl;
     for (int i = 0; i <= GetHeight(); i++)
         obj << "  ";
     obj << "- " << name;
@@ -111,7 +111,6 @@ bool Skill::ChildIsOpen()
 void Skill::SetName(char *aName)
 {
     int length = strlen(aName);
-    std::cout << "Length: " << length << std::endl;
     name = new char[length + 1];
     strcpy(name, aName);
 }
