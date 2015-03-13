@@ -44,6 +44,8 @@ SkillTree::SkillTree(char *aName)
 
 SkillTree::~SkillTree()
 {
+    delete [] name;
+    delete root;
 }
 
 /* Adds a new root to the tree. If there was already a root, it becomes a child
@@ -76,7 +78,7 @@ bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentNam
             }
         }
     }
-    return false;        
+    return false; 
 }
     
 

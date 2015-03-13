@@ -1,4 +1,4 @@
-/* TODO Fix all mem leaks (definitely a lot).
+/*  TODO Comment the code and we're done!
  *
  * File: Skill.h
  *
@@ -71,6 +71,11 @@ Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 
 Skill::~Skill()
 {
+    delete [] name;
+    delete [] desc;
+    for (int i = 0; i < maxChildren; i++)
+        delete children[i];
+    delete [] children;
 }
 
 void Skill::Display(std::ostream &obj)
