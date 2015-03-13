@@ -1,4 +1,4 @@
-/* TODO Fix format on last line (bitch), and then fix all mem leaks (definitely a lot).
+/* TODO Fix all mem leaks (definitely a lot).
  *
  * File: Skill.h
  *
@@ -75,9 +75,7 @@ Skill::~Skill()
 
 void Skill::Display(std::ostream &obj)
 {
-    for (int i = 0; i <= GetHeight(); i++)
-        obj << "  ";
-    obj << "- " << name;
+    obj << name;
     obj << " -- " << desc;
     obj << " [Lvl: " << level;
     obj << "]" << std::endl;
