@@ -9,20 +9,24 @@
  *
  */
 
-#define MAX_CHILDREN 3 /* Just to meet assignment requirements. Can be any int. */
+#define MAX_CHILDREN 3
 
 class Skill {
 public:
     Skill();
     Skill(char *aName, char *aDesc, int aLevel, Skill *aParent);
+    Skill(Skill &aSkill);
     ~Skill();
+    const Skill &operator=(Skill &aSkill);
     void Display(std::ostream &obj);
     int GetHeight();
     int GetMax();
     void SetName(char *aName);
     char *GetName();
     void SetDesc(char *aDesc);
+    char *GetDesc();
     void SetLevel(int level);
+    int GetLevel();
     void SetParent(Skill *aParent);
     Skill *GetParent();
     void SetChild(int index, Skill *child);
@@ -33,7 +37,6 @@ private:
     char *desc;
     int level;
     Skill *parent;
-    int maxChildren;
     Skill **children;
 };
 
@@ -44,16 +47,14 @@ Skill::Skill()
     desc = nullptr;
     level = 0;
     parent = nullptr;
-    maxChildren = MAX_CHILDREN;
-    children = new Skill*[maxChildren];
-    for (int i = 0; i < maxChildren; i++)
+    children = new Skill*[MAX_CHILDREN];
+    for (int i = 0; i < MAX_CHILDREN; i++)
         children[i] = nullptr;
 }
 
 /* Full constructor. Passes with it parameters for every class variable. */
 Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 {
-    maxChildren = MAX_CHILDREN;
     parent = aParent;
 
     int nameLen = strlen(aName);
@@ -66,20 +67,65 @@ Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 
     level = aLevel;
 
-    children = new Skill*[maxChildren];
-    for (int i = 0; i < maxChildren; i++)
+    children = new Skill*[MAX_CHILDREN];
+    for (int i = 0; i < MAX_CHILDREN; i++)
         children[i] = nullptr;
 }
 
-/* Destructor. Deletes data on node and all its children. */
+Skill::Skill(Skill &aSkill)
+{
+    parent = aSkill.GetParent();
+
+    int nameLen = strlen(aSkill.GetName());
+    name = new char[nameLen + 1];
+    strcpy(name, aSkill.GetName());
+
+    int descLen = strlen(aSkill.GetDesc());
+    desc = new char[descLen + 1];
+    strcpy(desc, aSkill.GetDesc());
+
+    level = aSkill.GetLevel();
+    
+    children = new Skill*[MAX_CHILDREN];
+    for (int i = 0; i < MAX_CHILDREN; i++)
+        children[i] = aSkill.GetChild(i);
+}
+
 Skill::~Skill()
 {
     delete [] name;
     delete [] desc;
-    for (int i = 0; i < maxChildren; i++)
+    for (int i = 0; i < MAX_CHILDREN; i++)
         delete children[i];
     delete [] children;
 }
+
+const Skill &Skill::operator=(Skill &aSkill)
+{
+    if (this == &aSkill) {
+        return *this;
+    } else {
+        delete [] name;
+        delete [] desc;
+        for (int i = 0; i < MAX_CHILDREN; i++)
+            delete children[i];
+        delete [] children;
+
+        int length = strlen(aSkill.GetName());
+        name = new char[length + 1];
+        strcpy(name, aSkill.GetName());
+
+        length = strlen(aSkill.GetDesc());
+        desc = new char[length + 1];
+        strcpy(name, aSkill.GetDesc());
+
+        level = aSkill.GetLevel();
+
+        children = new Skill*[MAX_CHILDREN];
+        for (int i = 0; i < MAX_CHILDREN; i++)
+            children[i] = aSkill.GetChild(i);
+    }
+}    
 
 /* Displays skill information. */
 void Skill::Display(std::ostream &obj)
@@ -104,13 +150,13 @@ int Skill::GetHeight()
 
 int Skill::GetMax()
 {
-    return maxChildren;
+    return MAX_CHILDREN;
 }
 
 /* Boolean for if a child node is available on this skill. */
 bool Skill::ChildIsOpen()
 {
-    for (int i = 0; i < maxChildren; i++) {
+    for (int i = 0; i < MAX_CHILDREN; i++) {
         if (children[i] == nullptr)
             return true;
     }
@@ -136,10 +182,20 @@ void Skill::SetDesc(char *aDesc)
     strcpy(desc, aDesc);
 }
 
+char *Skill::GetDesc()
+{
+    return desc;
+}
+
 void Skill::SetLevel(int aLevel)
 {
     level = aLevel;
 } 
+
+int Skill::GetLevel()
+{
+    return level;
+}
 
 void Skill::SetParent(Skill *aParent)
 {

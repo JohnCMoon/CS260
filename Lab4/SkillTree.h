@@ -16,13 +16,17 @@ class SkillTree {
 public:
     SkillTree();
     SkillTree(char *aName);
+    SkillTree(SkillTree &aTree);
     ~SkillTree();
+    const SkillTree &operator=(SkillTree &aTree);
     void AddSkill(char *skillName, char *desc, int level);
     bool AddSkill(char *skillName, char *desc, int level, char *parentName);
     Skill *FindSkill(char *name);
     void FindR(char *name, Skill *root, Skill **matchPtr);
     void Display(std::ostream &obj); 
     void DisplayR(std::ostream &obj, Skill *root);
+    char *GetName();
+    Skill *GetRoot();
 private:
     char *name;
     Skill *root;
@@ -40,12 +44,37 @@ SkillTree::SkillTree(char *aName)
     name = new char[length + 1];
     strcpy(name, aName);
     root = new Skill;
-}    
+}
+
+SkillTree::SkillTree(SkillTree &aTree)
+{
+    int length = strlen(aTree.GetName());
+    name = new char[length + 1];
+    strcpy(name, aTree.GetName());
+    root = aTree.GetRoot();
+}
 
 SkillTree::~SkillTree()
 {
     delete [] name;
     delete root;
+}
+
+const SkillTree &SkillTree::operator=(SkillTree &aTree)
+{
+    if (this == &aTree) {
+        return *this;
+    } else {
+        delete [] name;
+        delete root;
+        
+        int length = strlen(aTree.GetName());
+        name = new char[length + 1];
+        strcpy(name, aTree.GetName());
+        
+        root = new Skill;
+        root = aTree.GetRoot();
+    }
 }
 
 /* Adds a new root to the tree. If there was already a root, it becomes a child
@@ -131,4 +160,14 @@ void SkillTree::DisplayR(std::ostream &obj, Skill *root)
             DisplayR(obj, root->GetChild(i));
         }
     }
+}
+
+char *SkillTree::GetName()
+{
+    return name;
+}
+
+Skill *SkillTree::GetRoot()
+{
+    return root;
 }
