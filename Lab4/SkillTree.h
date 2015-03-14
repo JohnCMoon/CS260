@@ -64,6 +64,8 @@ void SkillTree::AddSkill(char *skillName, char *desc, int level)
     }
 }
 
+/* Adds a new skill to the tree under the passed parentName. Fails if parent is not found
+   or if there is not child open. */   
 bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentName)
 {
     Skill *parent = FindSkill(parentName);
@@ -81,7 +83,8 @@ bool SkillTree::AddSkill(char *skillName, char *desc, int level, char *parentNam
     return false; 
 }
     
-
+/* Recursively traverses the tree finding a skill with the given name.
+   returns NULL if no such skill is found in the tree. */
 Skill *SkillTree::FindSkill(char *name)
 {
     Skill *match = nullptr;
@@ -105,6 +108,7 @@ void SkillTree::FindR(char *name, Skill *node, Skill **matchPtr)
     }
 }
 
+/* Displays every skill in the tree using a recursive method. */
 void SkillTree::Display(std::ostream &obj)
 {
     obj << "Skill Tree: " << name << std::endl;
@@ -121,8 +125,10 @@ void SkillTree::DisplayR(std::ostream &obj, Skill *root)
         obj << "  ";
     obj << "- ";
     root->Display(obj);
+    obj << std::endl;
     for (int i = 0; i < root->GetMax(); i++) {
-        if (root->GetChild(i) != nullptr)
+        if (root->GetChild(i) != nullptr) {
             DisplayR(obj, root->GetChild(i));
+        }
     }
 }

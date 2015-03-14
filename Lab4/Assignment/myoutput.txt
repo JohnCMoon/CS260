@@ -59,4 +59,3 @@ Skill Tree: Warrior
         - Bow -- Fundamentals of using a bow and arrow [Lvl: 10]
 Found the skill
 Reading -- The ability to read all manner of written material [Lvl: 1]
-

@@ -1,15 +1,15 @@
-/*  TODO Comment the code and we're done!
+/*
  *
  * File: Skill.h
  *
  * Author: John Moon <john.moon1@pcc.edu>
  *
  * Purpose: Impmlements the skill class. This class will be treated as a node
-            class in the skill tree.
+ *          class in the skill tree.
  *
  */
 
-#define MAX_CHILDREN 3
+#define MAX_CHILDREN 3 /* Just to meet assignment requirements. Can be any int. */
 
 class Skill {
 public:
@@ -37,6 +37,7 @@ private:
     Skill **children;
 };
 
+/* Default constructor. Doesn't do much but set things to NULL. */
 Skill::Skill()
 {
     name = nullptr;
@@ -49,6 +50,7 @@ Skill::Skill()
         children[i] = nullptr;
 }
 
+/* Full constructor. Passes with it parameters for every class variable. */
 Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 {
     maxChildren = MAX_CHILDREN;
@@ -69,6 +71,7 @@ Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
         children[i] = nullptr;
 }
 
+/* Destructor. Deletes data on node and all its children. */
 Skill::~Skill()
 {
     delete [] name;
@@ -78,14 +81,16 @@ Skill::~Skill()
     delete [] children;
 }
 
+/* Displays skill information. */
 void Skill::Display(std::ostream &obj)
 {
     obj << name;
     obj << " -- " << desc;
     obj << " [Lvl: " << level;
-    obj << "]" << std::endl;
+    obj << "]";
 }
 
+/* Returns the skill's height on the overall tree. */
 int Skill::GetHeight()
 {
     int height = 0;
@@ -102,6 +107,7 @@ int Skill::GetMax()
     return maxChildren;
 }
 
+/* Boolean for if a child node is available on this skill. */
 bool Skill::ChildIsOpen()
 {
     for (int i = 0; i < maxChildren; i++) {
