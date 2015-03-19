@@ -20,6 +20,7 @@ public:
     Skill(const Skill &aSkill);
     ~Skill();
     const Skill &operator=(const Skill &aSkill);
+    friend std::ostream& operator<<(std::ostream& obj, const Skill &aSkill); 
     void Display(std::ostream &obj);
     int GetHeight();
     void SetName(char *aName);

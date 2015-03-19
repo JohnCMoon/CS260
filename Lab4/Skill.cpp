@@ -66,8 +66,10 @@ Skill::~Skill()
 {
     delete [] name;
     delete [] desc;
-    for (int i = 0; i < MAX_CHILDREN; i++)
+    for (int i = 0; i < MAX_CHILDREN; i++) {
         delete children[i];
+        children[i] = nullptr;
+    }
     delete [] children;
 }
 
@@ -102,6 +104,16 @@ const Skill &Skill::operator=(const Skill &aSkill)
     return *this;
 }
 
+/* Overloads extraction operator to display skill information. */
+std::ostream &operator<<(std::ostream &obj, const Skill &aSkill)
+{
+    obj << aSkill.name;
+    obj << " -- " << aSkill.desc;
+    obj << " [Lvl: " << aSkill.level;
+    obj << "]";
+    return obj;
+}
+   
 /* Displays skill information. */
 void Skill::Display(std::ostream &obj)
 {

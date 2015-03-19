@@ -132,7 +132,7 @@ void SkillTree::DisplayR(std::ostream &obj, Skill *root)
     for (int i = 0; i <= root->GetHeight(); i++)
         obj << "  ";
     obj << "- ";
-    root->Display(obj);
+    obj << *root;
     obj << std::endl;
     for (int i = 0; i < MAX_CHILDREN; i++) {
         if (root->GetChild(i) != nullptr) {
