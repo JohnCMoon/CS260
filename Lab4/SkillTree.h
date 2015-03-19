@@ -16,9 +16,9 @@ class SkillTree {
 public:
     SkillTree();
     SkillTree(char *aName);
-    SkillTree(SkillTree &aTree);
+    SkillTree(const SkillTree &aTree);
     ~SkillTree();
-    const SkillTree &operator=(SkillTree &aTree);
+    const SkillTree &operator=(const SkillTree &aTree);
     void AddSkill(char *skillName, char *desc, int level);
     bool AddSkill(char *skillName, char *desc, int level, char *parentName);
     Skill *FindSkill(char *name);

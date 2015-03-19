@@ -11,14 +11,15 @@
 
 #define MAX_CHILDREN 3 /* Per assignment requirements. */
 #include <iostream>
+#include <cstring>
 
 class Skill {
 public:
     Skill();
     Skill(char *aName, char *aDesc, int aLevel, Skill *aParent);
-    Skill(Skill &aSkill);
+    Skill(const Skill &aSkill);
     ~Skill();
-    const Skill &operator=(Skill &aSkill);
+    const Skill &operator=(const Skill &aSkill);
     void Display(std::ostream &obj);
     int GetHeight();
     void SetName(char *aName);

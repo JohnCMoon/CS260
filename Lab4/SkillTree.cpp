@@ -24,12 +24,12 @@ SkillTree::SkillTree(char *aName)
     root = new Skill;
 }
 
-SkillTree::SkillTree(SkillTree &aTree)
+SkillTree::SkillTree(const SkillTree &aTree)
 {
-    int length = strlen(aTree.GetName());
+    int length = strlen(aTree.name);
     name = new char[length + 1];
-    strcpy(name, aTree.GetName());
-    root = aTree.GetRoot();
+    strcpy(name, aTree.name);
+    root = aTree.root;
 }
 
 SkillTree::~SkillTree()
@@ -38,7 +38,7 @@ SkillTree::~SkillTree()
     delete root;
 }
 
-const SkillTree &SkillTree::operator=(SkillTree &aTree)
+const SkillTree &SkillTree::operator=(const SkillTree &aTree)
 {
     if (this == &aTree) {
         return *this;
@@ -46,13 +46,14 @@ const SkillTree &SkillTree::operator=(SkillTree &aTree)
         delete [] name;
         delete root;
         
-        int length = strlen(aTree.GetName());
+        int length = strlen(aTree.name);
         name = new char[length + 1];
-        strcpy(name, aTree.GetName());
+        strcpy(name, aTree.name);
         
         root = new Skill;
-        root = aTree.GetRoot();
+        root = aTree.root;
     }
+    return *this;
 }
 
 /* Adds a new root to the tree. If there was already a root, it becomes a child

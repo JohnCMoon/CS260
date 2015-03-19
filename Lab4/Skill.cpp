@@ -9,7 +9,6 @@
  */
 
 #include "Skill.h"
-#include <cstring>
 
 /* Default constructor. Doesn't do much but set things to NULL. */
 Skill::Skill()
@@ -21,8 +20,7 @@ Skill::Skill()
     children = new Skill*[MAX_CHILDREN];
     for (int i = 0; i < MAX_CHILDREN; i++)
         children[i] = nullptr;
-}
-
+} 
 /* Full constructor. Passes with it parameters for every class variable. */
 Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
 {
@@ -43,24 +41,27 @@ Skill::Skill(char *aName, char *aDesc, int aLevel, Skill *aParent)
         children[i] = nullptr;
 }
 
-Skill::Skill(Skill &aSkill)
+/* Copy constructor. Copies entire subtree of node. */
+Skill::Skill(const Skill &aSkill)
 {
-    parent = aSkill.GetParent();
-    int nameLen = strlen(aSkill.GetName());
+    parent = aSkill.parent;
+
+    int nameLen = strlen(aSkill.name);
     name = new char[nameLen + 1];
-    strcpy(name, aSkill.GetName());
+    strcpy(name, aSkill.name);
 
-    int descLen = strlen(aSkill.GetDesc());
+    int descLen = strlen(aSkill.desc);
     desc = new char[descLen + 1];
-    strcpy(desc, aSkill.GetDesc());
+    strcpy(desc, aSkill.desc);
 
-    level = aSkill.GetLevel();
+    level = aSkill.level;
     
     children = new Skill*[MAX_CHILDREN];
     for (int i = 0; i < MAX_CHILDREN; i++)
-        children[i] = aSkill.GetChild(i);
+        children[i] = aSkill.children[i];
 }
 
+/* Destructor. Will recursively destroy entire subtree of node. */
 Skill::~Skill()
 {
     delete [] name;
@@ -70,31 +71,35 @@ Skill::~Skill()
     delete [] children;
 }
 
-const Skill &Skill::operator=(Skill &aSkill)
+/* Equal overload. Will copy _only_ the node data, not the subtree. */
+const Skill &Skill::operator=(const Skill &aSkill)
 {
     if (this == &aSkill) {
         return *this;
     } else {
         delete [] name;
         delete [] desc;
-        for (int i = 0; i < MAX_CHILDREN; i++)
+        for (int i = 0; i < MAX_CHILDREN; i++) {
             delete children[i];
+            children[i] = nullptr;
+        }
         delete [] children;
 
-        int length = strlen(aSkill.GetName());
+        int length = strlen(aSkill.name);
         name = new char[length + 1];
-        strcpy(name, aSkill.GetName());
+        strcpy(name, aSkill.name);
 
-        length = strlen(aSkill.GetDesc());
+        length = strlen(aSkill.desc);
         desc = new char[length + 1];
-        strcpy(name, aSkill.GetDesc());
+        strcpy(name, aSkill.desc);
 
-        level = aSkill.GetLevel();
+        level = aSkill.level;
 
         children = new Skill*[MAX_CHILDREN];
         for (int i = 0; i < MAX_CHILDREN; i++)
-            children[i] = aSkill.GetChild(i);
+            children[i] = nullptr;
     }
+    return *this;
 }
 
 /* Displays skill information. */
